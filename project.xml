@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<project>
+	<meta title="SeedBeetle" package="com.example.app" version="1.0.0" company=""/>
+
+	<app file="Main" main="Main" path="export"/>
+	<icon path="HaxePunk-icon.svg"/>
+	<window antialiasing="0" />
+	<window fps="60" background="0x181e32"/>
+	<window width="960" height="640" resizable="true" unless="mobile"/>
+	<window width="0" height="0" fullscreen="true" if="mobile"/>
+	<window orientation="landscape" vsync="true" antialiasing="0" if="cpp"/>
+
+	<source path="source"/>
+
+	<haxelib name="HaxePunk"/>
+
+	<haxedef name="hxp_debug" unless="release" />
+	<set name="hxp_extras"/>
+
+	<assets path="assets/graphics" rename="graphics" include="*.png|*.jpg"/>
+	<assets path="assets/audio" rename="audio" include="*.wav|*.ogg"/>
+	<assets path="assets/font" rename="font" include="*.ttf"/>
+	<assets path="assets/levels" rename="levels" include="*.oel"/>
+</project>
+
