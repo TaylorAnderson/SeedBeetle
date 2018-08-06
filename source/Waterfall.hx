@@ -1,14 +1,10 @@
 package;
-
 import haxepunk.Entity;
-import haxepunk.Graphic;
-import haxepunk.HXP;
-import haxepunk.Mask;
 import haxepunk.graphics.Image;
 import haxepunk.graphics.Spritemap;
 import haxepunk.graphics.emitter.Emitter;
-import haxepunk.utils.Ease;
-import haxepunk.utils.Ease.EaseFunction;
+import haxepunk.math.Rectangle;
+
 
 /**
  * ...
@@ -47,26 +43,15 @@ class Waterfall extends Water {
 			this.waterStrideData = {width: 26, height: 10, path: "graphics/waterfall-stride.png"};
 			waterWidth = 28;
 		}
-		this.layer = 5;
+		this.layer = Layers.ENTITIES + 1;
+		
 	}
 	override public function added() {
 		
 		this.waterTop.add("anim", [0, 1], 10);
 		this.waterTop.play("anim");
 		
-		var waterHeight:Int = 0;
-		
-		var loopSafety = 50;
-		
-
-		while (collide("level", x, y+1) == null && loopSafety > 0) {
-			waterHeight += 8;
-			this.setHitbox(waterWidth, waterHeight, - cast(this.waterSpout.width / 2 - this.waterWidth / 2));
-			loopSafety--;
-		}
-		waterHeight -= Math.round(this.waterSpout.height / 2);
-		
-		this.waterBG = Image.createRect(waterWidth, waterHeight, 0x419bde);
+		this.waterBG = Image.createRect(waterWidth, 1, 0x419bde);
 		
 		
 		this.addGraphic(this.waterSpout);
@@ -97,19 +82,33 @@ class Waterfall extends Water {
 	}
 	
 	override public function update() {
+		var waterHeight:Int = 0;
+		
+		var loopSafety = 1000;
+		this.setHitbox(waterWidth, 1, - cast(this.waterSpout.width / 2 - this.waterWidth / 2));
+		
+		while (collide("level", x, y+1) == null && loopSafety > 0) {
+			waterHeight += 1;
+			this.setHitbox(waterWidth, waterHeight, - cast(this.waterSpout.width / 2 - this.waterWidth / 2));
+			loopSafety--;
+		}
+		
+		this.waterBG.scaleY = waterHeight - this.waterBG.y;
+		
 		if (small) {
-			fxEmitter.emit("water", this.x + waterBG.width / 2 + 7, this.y + waterBG.height + 5);
+			fxEmitter.emit("water", this.x + waterBG.width / 2 + 7, this.y + waterHeight);
 		}
 		else {
-			fxEmitter.emit("water", this.x+11, this.y + waterBG.height + 5);
-			fxEmitter.emit("water", this.x + waterBG.width / 2 + 7, this.y + waterBG.height + 5);
-			fxEmitter.emit("water", this.x + waterBG.width + 1, this.y + waterBG.height + 5);
+			fxEmitter.emit("water", this.x+11, this.y + waterHeight);
+			fxEmitter.emit("water", this.x + waterBG.width / 2 + 7, this.y + waterHeight);
+			fxEmitter.emit("water", this.x + waterBG.width + 1, this.y + waterHeight);
 		}
 
 		this.waterStrideCounter++;
 		if (this.waterStrideCounter/60 > this.waterStrideInterval) {
 			waterStrideCounter = 0;
-			var waterStride = new WaterStride(this.x + this.waterTop.x+0.6, this.waterTop.y + this.y, this.waterStrideData, this.waterBG.height);
+			var waterStride = new WaterStride(this.x + this.waterTop.x + 0.6, this.waterTop.y + this.y, this.waterStrideData, waterHeight);
+			waterStride.graphic.clipRect = new Rectangle(0, 0, this.width, waterHeight);
 			this.scene.add(waterStride);
 			waterStride.layer = this.layer - 1;
 		}
@@ -120,11 +119,13 @@ class WaterStride extends Entity {
 	private var img:Spritemap;
 	private var waterHeight:Float;
 	private var oy:Float;
-	public function new(x:Float, y:Float, data:SpritemapData, waterHeight:Float) {
+	private var waterRect:Rectangle;
+	public function new(x:Float, y:Float, data:SpritemapData, waterFlowRect:Rectangle) {
 		super(x, y);
 		this.img = new Spritemap(data.path, data.width, data.height);
-		this.waterHeight = waterHeight;
+		this.waterRect = waterFlowRect
 		this.graphic = img;
+		
 		img.add("anim", [1, 1], 15);
 		img.play("anim");
 		oy = y;

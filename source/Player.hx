@@ -102,6 +102,7 @@ class Player extends PhysicsObject {
 		type = "level";
 		name = "player";
 		
+		this.layer = Layers.ENTITIES;
 		
 		
 		this.fsm.onChangeState.bind(function() {
@@ -112,7 +113,7 @@ class Player extends PhysicsObject {
 		hoverCounter = 0;
 		hasJumped = false;
 		v.y = 0;
-		setHitbox(16, 16);
+		setHitbox(16, 14, 0, -2);
 	
 	}
 	private function onGroundUpdate():Void {

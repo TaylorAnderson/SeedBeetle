@@ -27,6 +27,7 @@ class Seed extends Carryable {
 		setHitbox(20, 16);
 		type = "level";
 		name = "seed";
+		layer = Layers.ENTITIES;
 		
 	}
 	override public function update() {

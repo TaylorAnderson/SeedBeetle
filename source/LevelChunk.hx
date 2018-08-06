@@ -34,7 +34,7 @@ class LevelChunk extends Entity {
 		//this.addGraphic(bgTiles); 
 		this.addGraphic(tiles); 
 		mask = grid;
-		layer = -10;
+		layer = Layers.LEVEL;
 		type = "level";
 		
 	}
