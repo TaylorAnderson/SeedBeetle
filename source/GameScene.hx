@@ -28,8 +28,8 @@ class GameScene extends Scene {
 		
 		this.add(player);
 		this.add(level = new LevelChunk(0, 0, "levels/testlevel.oel", player));
-		this.add(new Waterfall(250, 340));
-		this.add(new Waterfall(130, 385, true));
+		this.add(new Waterfall(130, 385));
+		//this.add(new Waterfall(130, 385, true));
 	}
 	public override function update() {
 		super.update();
