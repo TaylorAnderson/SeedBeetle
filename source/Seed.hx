@@ -24,19 +24,19 @@ class Seed extends Carryable {
 	public var seedType:SeedType = SeedType.BEANSTALK; //for testing; we're gonna set this by reading the data coming from ogmo.
 	public function new(x:Float=0, y:Float=0) {
 		super(x, y, img);
-		setHitbox(20, 16);
+		setHitbox(14, 16, -4);
 		type = "level";
 		name = "seed";
-		layer = Layers.ENTITIES;
+		layer = Layers.ENTITIES + 1;
 		
 	}
 	override public function update() {
 		super.update();
 		this.waterDelayTimer += HXP.elapsed;
 		var water = collide("water", x, y);
-		if (water != null && Std.is(water, Water) && (waterDelayTimer > this.waterDelay || !cast(water, Water).isContinuous)) {
+		if (water != null && Std.is(water, IWater) && (waterDelayTimer > this.waterDelay || !cast(water, IWater).isContinuous)) {
 			this.waterDelayTimer -= waterDelay;
-			cast(water, Water).consume();
+			cast(water, IWater).consume();
 			this.waterNeeded--;
 			if (this.waterNeeded <= 0) {
 				this.sprout();

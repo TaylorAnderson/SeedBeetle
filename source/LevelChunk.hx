@@ -18,6 +18,7 @@ class LevelChunk extends Entity {
 	
 	var tiles:Tilemap; 
 	var bgTiles:Tilemap;
+	var decoTiles:Tilemap;
 	var grid:Grid;
 	var player:Player;
 	var level:String;
@@ -31,8 +32,9 @@ class LevelChunk extends Entity {
 	override public function added() {
 		
 		this.loadLevel(level);
-		//this.addGraphic(bgTiles); 
+		this.addGraphic(bgTiles); 
 		this.addGraphic(tiles); 
+		this.addGraphic(decoTiles);
 		mask = grid;
 		layer = Layers.LEVEL;
 		type = "level";
@@ -46,15 +48,21 @@ class LevelChunk extends Entity {
 		grid = new Grid(Std.parseInt(fastXml.att.width), Std.parseInt(fastXml.att.height), Global.GS, Global.GS);
 		grid.loadFromString(fastXml.node.Grid.innerData, "", "\n");
 		
+		
 		tiles = new Tilemap("graphics/tiles.png", Std.parseInt(fastXml.att.width), Std.parseInt(fastXml.att.height), Global.GS, Global.GS);
 		tiles.pixelSnapping = true;
 		
 		
 		
-		/*bgTiles = new Tilemap("graphics/bgtiles.png", Std.parseInt(fastXml.att.width), Std.parseInt(fastXml.att.height), Global.GS, Global.GS);
+		bgTiles = new Tilemap("graphics/tiles.png", Std.parseInt(fastXml.att.width), Std.parseInt(fastXml.att.height), Global.GS, Global.GS);
 		bgTiles.pixelSnapping = true;
 		
-		bgTiles.loadFromString(fastXml.node.BG.innerData, ",", "\n");*/
+		bgTiles.loadFromString(fastXml.node.BGTiles.innerData, ",");
+		
+		decoTiles = new Tilemap("graphics/tiles.png", Std.parseInt(fastXml.att.width), Std.parseInt(fastXml.att.height), Global.GS, Global.GS);
+		decoTiles.pixelSnapping = true;
+		
+		decoTiles.loadFromString(fastXml.node.Scenery.innerData, ",");
 		
 		
 		for (s in fastXml.node.Entities.nodes.Player) {
@@ -66,6 +74,15 @@ class LevelChunk extends Entity {
 			var seed = new Seed(Std.parseInt(s.att.x), Std.parseInt(s.att.y));
 			this.scene.add(seed);
 		}
+		for (s in fastXml.node.Entities.nodes.BigWaterfall) {
+			var waterfall = new Waterfall(Std.parseInt(s.att.x), Std.parseInt(s.att.y));
+			this.scene.add(waterfall);
+		}
+		for (s in fastXml.node.Entities.nodes.Pool) {
+			var pool = new WaterPool(Std.parseInt(s.att.x), Std.parseInt(s.att.y), Std.parseInt(s.att.width), Std.parseInt(s.att.height));
+			this.scene.add(pool);
+		}
+		
 		
 		autoTile();
 	}
@@ -75,7 +92,8 @@ class LevelChunk extends Entity {
 		var row:Int = 0;
 		while (row < tiles.height / 8)
 		{
-			if (getTile(col, row))
+			//if we're doing some sort of custom thing with this tile, just chill.
+			if (getTile(col, row) && decoTiles.getTile(col, row) == -1)
 			{
 				var left:Bool = 		getTile(col - 1, 	row);
 				var right:Bool = 		getTile(col + 1, 	row);

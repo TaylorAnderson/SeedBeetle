@@ -4,6 +4,8 @@ import haxepunk.Entity;
 import haxepunk.Graphic;
 import haxepunk.HXP;
 import haxepunk.Mask;
+import haxepunk.masks.Imagemask;
+import haxepunk.masks.Pixelmask;
 import haxepunk.math.MathUtil;
 import haxepunk.math.Vector2;
 
@@ -29,15 +31,21 @@ class PhysicsObject extends Entity {
 		}
 		
 
-
-		this.x += v.x;
-		resolveCollisions("level", true, false);
-		this.y += v.y;
-		resolveCollisions("level", false, true);
-		
+		moveBy(v.x, v.y, "level", true);
 		
 		
 
+	}
+	
+	override public function moveCollideY(e:Entity):Bool {
+		v.y = 0;
+		return true;
+	}
+
+	override public function moveCollideX(e:Entity):Bool
+	{
+		v.x = 0;
+		return true;
 	}
 	public function canUseCollision(collisionObj:Entity, useX:Bool) {
 		return true;

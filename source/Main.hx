@@ -20,9 +20,9 @@ class Main extends Engine
 		
 		Graphic.smoothDefault = false;
 		Graphic.pixelSnappingDefault = true;
-		//PixelArtScaler.globalActivate();
+		PixelArtScaler.globalActivate();
 		
-		//HXP.resize(960, 640);
+		HXP.resize(960, 640);
 		HXP.scene = new GameScene();
 	}
 

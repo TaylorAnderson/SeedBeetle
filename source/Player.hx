@@ -6,6 +6,8 @@ import haxepunk.HXP;
 import haxepunk.graphics.Graphiclist;
 import haxepunk.graphics.Image;
 import haxepunk.graphics.Spritemap.Animation;
+import haxepunk.masks.Imagemask;
+import haxepunk.masks.Pixelmask;
 import plants.Plant;
 
 //import com.haxepunk.Sfx;
@@ -80,7 +82,7 @@ class Player extends PhysicsObject {
 		fsm.bind(PlayerState.AIR, this.onAirEnter, this.onAirUpdate, this.onAirExit);
 		fsm.bind(PlayerState.CARRYING, this.onCarryEnter, this.onCarryUpdate, this.onCarryExit);
 		fsm.bind(PlayerState.CLIMBING, this.onClimbEnter, this.onClimbUpdate, this.onClimbExit);
-		setHitbox(16, 16);
+		setHitbox(20, 16);
 		
 		fsm.changeState(PlayerState.GROUND);
 		
@@ -99,7 +101,7 @@ class Player extends PhysicsObject {
 		var jumpAnim = img.add(PAnim.JUMP, [1]);
 		var climbAnim = img.add(PAnim.CLIMB, [2]);
 		
-		type = "level";
+		type = "level";    
 		name = "player";
 		
 		this.layer = Layers.ENTITIES;
@@ -179,7 +181,6 @@ class Player extends PhysicsObject {
 		setHitbox(img.width, 12, 0, -4);
 	}
 	private function onAirUpdate():Void {
-		gravity = v.y > 0 ? fallingGravity : risingGravity;
 		img.play("jump");
 		
 		if (collide("level", x, y+1) != null) {
@@ -207,13 +208,18 @@ class Player extends PhysicsObject {
 	}
 	
 	private function onCarryEnter():Void {
+		this.carrying.gravity = this.gravity;
 		liftedOff = false;
-		setHitbox(16, 16);
+		setHitbox(20, 10, 2, -6);
 		
 		//carrying.forcesPaused = true;
 		v.y = -gravity - 2;
 		this.carrying.v.y = -gravity - 2;
-		this.x = this.carrying.x + this.carrying.width / 2 - this.width / 2;
+		this.x = this.carrying.x + carrying.width / 2 - this.width / 2;
+		
+		if (Std.is(carrying, Seed)) {
+			this.x += 4; // to match seed offset
+		}
 		
 	}
 	private function onCarryUpdate():Void {
@@ -252,7 +258,7 @@ class Player extends PhysicsObject {
 	
 	private function onClimbEnter():Void {
 		this.forcesPaused = true;
-		
+				
 		if (collide("level", x + 1, y) != null) {
 			this.climbing = collide("level", x + 1, y);
 			climbingPos = 1;
@@ -337,11 +343,11 @@ class Player extends PhysicsObject {
 		
 		fsm.update();
 		
-
 		this.gravity = v.y > 0 ? fallingGravity : risingGravity;
 		inputVector.x = inputVector.y = 0;
 		if (Input.check(PInput.LEFT)) inputVector.x = -1;
 		if (Input.check(PInput.RIGHT)) inputVector.x = 1;
+		
 		
 		super.update();
 		
