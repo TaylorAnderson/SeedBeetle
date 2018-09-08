@@ -1,8 +1,5 @@
 package;
 
-import flash.display.Graphics;
-import flash.geom.Point;
-import flash.geom.Rectangle;
 import haxepunk.Camera;
 import haxepunk.Entity;
 import haxepunk.Graphic;
@@ -11,12 +8,9 @@ import haxepunk.Mask;
 import haxepunk.graphics.Image;
 import haxepunk.graphics.Spritemap;
 import haxepunk.graphics.shader.TextureShader;
-import haxepunk.masks.Polygon;
 import haxepunk.math.Vector2;
 import haxepunk.utils.Color;
 import haxepunk.utils.Draw;
-import openfl.display.BitmapData;
-import openfl.display.Sprite;
 
 /**
  * ...
@@ -31,31 +25,32 @@ typedef WavePoint = {
 }
 class WaterPool extends Entity implements IWater {
 	public var isContinuous:Bool;
+	public var img:Image;
 	
 	
 	
 	// Resolution of simulation
-	var NUM_POINTS = 40;
+	var NUM_POINTS = 80;
 	// Width of simulation
-	var WIDTH = 0;
+	var WIDTH = 600;
 	// Spring constant for forces applied by adjacent points
 	var SPRING_CONSTANT = 0.005;
 	// Sprint constant for force applied to baseline
-	var SPRING_CONSTANT_BASELINE = 0.001;
+	var SPRING_CONSTANT_BASELINE = 0.005;
 	// Vertical draw offset of simulation
-	var Y_OFFSET = 3;
+	var Y_OFFSET = 5;
 	// Damping to apply to speed changes
 	var  DAMPING = 0.99;
 	// Number of iterations of point-influences-point to do on wave per step
 	// (this makes the waves animate faster)
-	var ITERATIONS = 5;
+	var ITERATIONS = 20;
 	
 	// A phase difference to apply to each sine
 	var offset = 0;
 
-	var NUM_BACKGROUND_WAVES = 20;
-	var BACKGROUND_WAVE_MAX_HEIGHT = 1;
-	var BACKGROUND_WAVE_COMPRESSION = 1 / 7;
+	var NUM_BACKGROUND_WAVES = 7;
+	var BACKGROUND_WAVE_MAX_HEIGHT = 6;
+	var BACKGROUND_WAVE_COMPRESSION = 1 / 10;
 	
 		// Amounts by which a particular sine is offset
 	var sineOffsets = [];
@@ -70,22 +65,11 @@ class WaterPool extends Entity implements IWater {
 	
 	var wavePoints:Array<WavePoint>;
 	
-	var spr:Sprite = new Sprite();
+	private var canSplash:Bool = true;
 	
-	var img:Image;
-	
-	var data:BitmapData;
 	public function new(x:Float = 0, y:Float = 0, width:Int = 0, height:Int = 0) {
 		
-		super(x, y);
-		
-		this.data = new BitmapData(width, height, true, 0x00000000);
-		data.draw(spr);
-		
-		img = new Image(data);
-		this.graphic = img;
-		
-		
+		super(x, y, graphic, mask);
 		
 		this.setHitbox(width, height);
 		WIDTH = width;
@@ -108,7 +92,7 @@ class WaterPool extends Entity implements IWater {
 		
 		wavePoints = makeWavePoints(NUM_POINTS);
 		
-		this.layer = Layers.BG - 2;
+		this.layer = -20;
 		
 		this.update();
 	}
@@ -118,42 +102,30 @@ class WaterPool extends Entity implements IWater {
 	}
 	
 	override public function update():Void {
-
+		offset++;
+		// Update positions of points
+		//updateWavePoints(wavePoints);
+		
+		var collided = collide("level", x, y);
+		if (collided != null && canSplash) {
+			//canSplash = false;
+			this.splash(collided.x - this.x);
+		}
 	}
 	
 	override public function render(camera:Camera):Void {
 		super.render(camera);
 		
-		offset++;
-		// Update positions of points
-		updateWavePoints(wavePoints);
+
 		
+		Draw.setColor(0x3cacff, 0.5);
 		
-		var adjustX = 0;
-		var adjustY = 0;
-		var g = spr.graphics;
-		
-		g.clear();
-		g.beginFill(0x3cacff, 0.5);
-		g.moveTo(0, height);
 		for (n in 0...wavePoints.length) {
 			var p = wavePoints[n];  
-			var px = adjustX + p.x;
-			var py = adjustY + p.y + overlapSines(p.x);
-			g.lineTo(px, py);
+			var px = this.x - camera.x + p.x;
+			var py = this.y - camera.y + (p.y + overlapSines(p.x));
+			Draw.rectFilled(px, py, WIDTH / NUM_POINTS, this.height- (py - this.y));
 		}
-		g.lineTo(width, height);
-		g.lineTo(0, height);
-		g.endFill();
-		data.fillRect(new Rectangle(0, 0, data.width, data.height), 0x00000000);
-		data.draw(spr);
-		
-		
-		
-		
-		
-		
-		
 	}
 	
 	// Make points to go on the wave
@@ -194,13 +166,14 @@ class WaterPool extends Entity implements IWater {
 				var forceFromLeft:Float = 0; 
 				var forceFromRight:Float = 0;
 
-				if (n == 0) { // end left
+				if (n == 0) { // wrap to left-to-right
 					forceFromLeft = SPRING_CONSTANT * SPRING_CONSTANT_BASELINE;
 				} else { // normally
 					var dy = points[n - 1].y - p.y;
 					forceFromLeft = SPRING_CONSTANT * dy;
 				}
-				if (n == points.length - 1) { // end right
+				if (n == points.length - 1) { // wrap to right-to-left
+					
 					forceFromRight = SPRING_CONSTANT * SPRING_CONSTANT_BASELINE;
 				} else { // normally
 					var dy = points[n + 1].y - p.y;
@@ -226,13 +199,12 @@ class WaterPool extends Entity implements IWater {
 		}
 	}
 
-	function onDrop() {
-		/*
-		var closestPoint = {};
-		var closestDistance = -1;
+	function splash(x:Float) {
+		var closestPoint:WavePoint = null;
+		var closestDistance:Float = -1;
 		for (n in 0...wavePoints.length) {
 			var p = wavePoints[n];
-			var distance = Math.abs(pjs.mouseX - p.x);
+			var distance = Math.abs(x - p.x);
 			if (closestDistance == -1) {
 			  closestPoint = p;
 			  closestDistance = distance;
@@ -242,8 +214,11 @@ class WaterPool extends Entity implements IWater {
 			}
 		 
 		}
-		closestPoint.y = pjs.mouseY;
-		*/
+		if (closestPoint != null) {
+			closestPoint.y = closestPoint.y + 20;  
+		}
+		
+		
 	}
 }
 
