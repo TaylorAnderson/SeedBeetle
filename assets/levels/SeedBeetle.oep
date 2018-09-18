@@ -5,15 +5,15 @@
   <BackgroundColor A="255" R="31" G="60" B="97" />
   <GridColor A="255" R="45" G="85" B="136" />
   <LevelDefaultSize>
-    <Width>240</Width>
+    <Width>480</Width>
     <Height>160</Height>
   </LevelDefaultSize>
   <LevelMinimumSize>
-    <Width>240</Width>
+    <Width>480</Width>
     <Height>160</Height>
   </LevelMinimumSize>
   <LevelMaximumSize>
-    <Width>240</Width>
+    <Width>480</Width>
     <Height>160</Height>
   </LevelMaximumSize>
   <Filename>D:\Game Projects\HaxePunk Projects\SeedBeetle\assets\levels\SeedBeetle.oep</Filename>
@@ -42,8 +42,8 @@
     <LayerDefinition xsi:type="EntityLayerDefinition">
       <Name>Entities</Name>
       <Grid>
-        <Width>8</Width>
-        <Height>8</Height>
+        <Width>4</Width>
+        <Height>4</Height>
       </Grid>
       <ScrollFactor>
         <X>1</X>
@@ -167,7 +167,7 @@
     <EntityDefinition Name="Pool" Limit="-1" ResizableX="true" ResizableY="true" Rotatable="false" RotateIncrement="15">
       <Size>
         <Width>16</Width>
-        <Height>16</Height>
+        <Height>8</Height>
       </Size>
       <Origin>
         <X>0</X>
@@ -175,6 +175,21 @@
       </Origin>
       <ImageDefinition DrawMode="Rectangle" ImagePath="" Tiled="false">
         <RectColor A="255" R="0" G="128" B="255" />
+      </ImageDefinition>
+      <ValueDefinitions />
+      <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
+    </EntityDefinition>
+    <EntityDefinition Name="BigBug" Limit="-1" ResizableX="false" ResizableY="false" Rotatable="false" RotateIncrement="15">
+      <Size>
+        <Width>59</Width>
+        <Height>38</Height>
+      </Size>
+      <Origin>
+        <X>0</X>
+        <Y>0</Y>
+      </Origin>
+      <ImageDefinition DrawMode="Image" ImagePath="..\graphics\big-bug.png" Tiled="false">
+        <RectColor A="255" R="255" G="0" B="0" />
       </ImageDefinition>
       <ValueDefinitions />
       <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />

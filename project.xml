@@ -13,6 +13,7 @@
 	<source path="source"/>
 
 	<haxelib name="HaxePunk"/>
+	<haxelib name="Actuate" />
 
 	<haxedef name="hxp_debug" unless="release" />
 	<set name="hxp_extras"/>

@@ -32,9 +32,6 @@ class LevelChunk extends Entity {
 	override public function added() {
 		
 		this.loadLevel(level);
-		this.addGraphic(bgTiles); 
-		this.addGraphic(tiles); 
-		this.addGraphic(decoTiles);
 		mask = grid;
 		layer = Layers.LEVEL;
 		type = "level";
@@ -52,17 +49,31 @@ class LevelChunk extends Entity {
 		tiles = new Tilemap("graphics/tiles.png", Std.parseInt(fastXml.att.width), Std.parseInt(fastXml.att.height), Global.GS, Global.GS);
 		tiles.pixelSnapping = true;
 		
+		var tileEntity = new Entity(this.x, this.y, tiles);
 		
+		this.scene.add(tileEntity);
+		
+		tileEntity.layer = Layers.LEVEL;
 		
 		bgTiles = new Tilemap("graphics/tiles.png", Std.parseInt(fastXml.att.width), Std.parseInt(fastXml.att.height), Global.GS, Global.GS);
 		bgTiles.pixelSnapping = true;
-		
 		bgTiles.loadFromString(fastXml.node.BGTiles.innerData, ",");
+		
+		var bgEntity = new Entity(this.x, this.y, bgTiles);
+		
+		scene.add(bgEntity);
+		
+		bgEntity.layer = Layers.BG;
 		
 		decoTiles = new Tilemap("graphics/tiles.png", Std.parseInt(fastXml.att.width), Std.parseInt(fastXml.att.height), Global.GS, Global.GS);
 		decoTiles.pixelSnapping = true;
-		
 		decoTiles.loadFromString(fastXml.node.Scenery.innerData, ",");
+		
+		var decoEntity = new Entity(this.x, this.y, decoTiles);
+		
+		scene.add(decoEntity);  
+		
+		decoEntity.layer = Layers.LEVEL - 1;
 		
 		
 		for (s in fastXml.node.Entities.nodes.Player) {
@@ -81,6 +92,10 @@ class LevelChunk extends Entity {
 		for (s in fastXml.node.Entities.nodes.Pool) {
 			var pool = new WaterPool(Std.parseInt(s.att.x), Std.parseInt(s.att.y), Std.parseInt(s.att.width), Std.parseInt(s.att.height));
 			this.scene.add(pool);
+		}
+		for (s in fastXml.node.Entities.nodes.BigBug) {
+			var bug = new BigBug(Std.parseInt(s.att.x), Std.parseInt(s.att.y));
+			scene.add(bug);
 		}
 		
 		

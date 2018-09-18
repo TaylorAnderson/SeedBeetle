@@ -18,7 +18,7 @@ class WaterBullet implements IWater extends Entity {
 	private var v:Vector2;
 	private var friction:Float = 0.995;
 	private var gravity:Float = 0.3;
-	private var gravResistTimer:Float = 1;
+	private var gravResistTimer:Float = 0.25;
 	
 	public var isContinuous:Bool = false;
 	public function new(x:Float=0, y:Float=0, v:Vector2) {
@@ -45,7 +45,6 @@ class WaterBullet implements IWater extends Entity {
 		//if its a seed, we let the seed handle that collision.
 		if (level != null && level != Global.PLAYER && !Std.is(level, Seed)) {
 			this.scene.remove(this);
-			trace("dying here");
 		}
 	}
 	

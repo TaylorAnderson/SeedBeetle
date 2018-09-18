@@ -24,12 +24,23 @@ class GameScene extends Scene {
 
 		this.add(player);
 		this.add(level = new LevelChunk(0, 0, "levels/testlevel.oel", player));
-		this.add(new WaterSpout(160, 410));
-		// this.add(new Waterfall(130, 385, true));
+		this.add(new WaterMeter());
+		
+		Key.define("RESET", [Key.R]);
+		
+		HXP.camera.pixelSnapping = true;
+	}
+	
+	public function reset() {
+		HXP.scene = new GameScene();
 	}
 
 	public override function update() {
 		super.update();
+		
+		if (Input.pressed("RESET")) {
+			reset();
+		}
 
 		if (!snappedCamera) {
 			var playerPosInfluence = new Vector2(player.x - HXP.halfWidth + player.halfWidth, player.y - HXP.halfHeight + player.halfHeight);
@@ -45,7 +56,7 @@ class GameScene extends Scene {
 		MathUtil.clampInRect(playerPosInfluence, 0, 0, this.level.width - HXP.width, this.level.height - HXP.height);
 		MathUtil.clampInRect(playerLookInfluence, 0, 0, this.level.width - HXP.width, this.level.height - HXP.height);
 
-		HXP.camera.x = MathUtil.lerp((HXP.camera.x), (playerPosInfluence.x), 0.2);
-		HXP.camera.y = MathUtil.lerp((HXP.camera.y), (playerPosInfluence.y), 0.2);
+		HXP.camera.x = Math.round(MathUtil.lerp((HXP.camera.x), (playerPosInfluence.x), 0.2));
+		HXP.camera.y = Math.round(MathUtil.lerp((HXP.camera.y), (playerPosInfluence.y), 0.2));
 	}
 }

@@ -26,7 +26,7 @@ class StateMachine<E:EnumValue> {
 		}
 	}
 	
-	public function bind(state:E, onEnter:Void->Void, onUpdate:Void->Void, onExit:Void->Void) {
+	public function bind(state:E, onEnter:Void->Void = null, onUpdate:Void->Void = null, onExit:Void->Void = null) {
 		var state = stateMap.get(state);
 		state.onEnter = onEnter;
 		state.onUpdate = onUpdate;

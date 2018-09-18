@@ -1,12 +1,15 @@
 package;
 
+import flash.geom.Point;
 import haxepunk.Entity;
 import haxepunk.Graphic;
 import haxepunk.HXP;
 import haxepunk.Mask;
+import haxepunk.masks.Grid;
 import haxepunk.masks.Imagemask;
 import haxepunk.masks.Pixelmask;
 import haxepunk.math.MathUtil;
+import haxepunk.math.Rectangle;
 import haxepunk.math.Vector2;
 
 /**
@@ -29,12 +32,7 @@ class PhysicsObject extends Entity {
 			v.y += gravity;
 			v.x *= friction;
 		}
-		
-
 		moveBy(v.x, v.y, "level", true);
-		
-		
-
 	}
 	
 	override public function moveCollideY(e:Entity):Bool {
@@ -49,7 +47,6 @@ class PhysicsObject extends Entity {
 	}
 	public function canUseCollision(collisionObj:Entity, useX:Bool) {
 		return true;
-
 	}
 	public function resolveCollisions(type:String, useX:Bool, useY:Bool, bounce:Bool = false, xOffset:Float = 0, yOffset:Float = 0):Void {
 
@@ -73,5 +70,5 @@ class PhysicsObject extends Entity {
 		}
 	}
 
-	
+
 }
