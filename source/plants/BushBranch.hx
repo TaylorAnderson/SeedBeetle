@@ -20,7 +20,7 @@ class BushBranch extends Plant {
 		super(x, y, img);
 		setHitbox(32, 16);
 		
-		this.layer = Layers.ENTITIES;
+		this.layer = Layers.ENTITIES - 5;
 
 		
 	}
@@ -33,7 +33,7 @@ class BushBranch extends Plant {
 		this.scene.add(branchRight);
 		
 		branchRight.x = branchLeft.x = this.x + this.width / 2;
-		branchRight.y = branchLeft.y = this.y + this.height / 2 - this.branchLeft.height / 2 + 1;
+		branchRight.y = branchLeft.y = this.y + this.height / 2 - this.branchLeft.height / 2 + 3;
 	}
 	
 }
@@ -47,7 +47,7 @@ class Branch extends Entity {
 		this.graphic = img;
 		this.dir = dir;
 		img.scaleX = 0;
-		this.layer = Layers.ENTITIES + 1;
+		this.layer = Layers.ENTITIES - 1;
 		type = "level";
 		
 		
@@ -84,27 +84,26 @@ class Branch extends Entity {
 			if (Std.is(col, PhysicsObject)) {
 				var closest = dir == 1 ? x + img.width * img.scaleX : x - img.width * img.scaleX - (col.width - col.originX);
 				var colX = col.x;
-				col.moveBy(closest - col.x + dir, 0, "level");
 				
-				if (colX == col.x) {
-					stopGrowth(col);
+				var potentialHit = col.collide("level", col.x + (closest - col.x + dir), col.y);
+				if (potentialHit != null && potentialHit != this) {
+					stopGrowthAt(formerWidth, formerOriginX);
+				}
+				else {
+					col.moveBy(closest - col.x + dir, 0, "level");
 				}
 			}
 			else {
-				stopGrowth(col);
+				stopGrowthAt(formerWidth, formerOriginX);
 			}
 		}
 	}
 	
-	private function stopGrowth(e:Entity) {
+	private function stopGrowthAt(w:Int, ox:Int) {
 		Actuate.stop(img);
-		var loopSafety = 1000;
-		while (collide("level", x, y) != null && loopSafety > 0) {
-			loopSafety--;
-			width --;
-			setHitbox(width, img.height, this.originX);
-		}
-		img.scaleX = width / img.width;
+		this.setHitbox(w, img.height, ox);
+		//we can do this because img.width is unscaled.
+		img.scaleX = w / img.width;
 	}
 	override public function update() {
 	}

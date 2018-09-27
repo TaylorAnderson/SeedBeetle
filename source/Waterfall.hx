@@ -4,6 +4,7 @@ import haxepunk.HXP;
 import haxepunk.graphics.Image;
 import haxepunk.graphics.Spritemap;
 import haxepunk.graphics.emitter.Emitter;
+import haxepunk.math.MathUtil;
 import haxepunk.math.Random;
 import haxepunk.math.Rectangle;
 import haxepunk.math.Vector2;
@@ -19,7 +20,7 @@ typedef SpritemapData = {
 	var height:Int;
 	var path:String;
 }
-class Waterfall implements IWater extends Entity{
+class Waterfall extends Entity{
 
 	var waterSpout:Image;
 	var waterBG:Image;
@@ -31,11 +32,12 @@ class Waterfall implements IWater extends Entity{
 	
 	var waterHeight:Int = 0;
 	
-	public var isContinuous:Bool = true;
+	
 	
 	private var particleTimer:Float = 0;
 	
 	private var columns:Array<WaterColumn> = [];
+	
 	public function new(x:Float=0, y:Float=0, small:Bool = false) {
 		super(x, y);
 		this.small = small;
@@ -66,7 +68,6 @@ class Waterfall implements IWater extends Entity{
 		
 		scene.add(waterTop);
 		waterTop.layer = this.layer - 2;
-		trace(this.waterTop.width);
 		this.waterTop.x = this.x + this.waterSpout.width / 2 - this.waterTop.width / 2 + 0.5;
 		this.waterTop.y = this.y + this.waterSpout.height / 2 + 2;
 		
@@ -84,18 +85,17 @@ class Waterfall implements IWater extends Entity{
 	}
 	
 	override public function update() {
-		
-			for (i in Math.round(Random.range(0, 15))...Math.floor(Random.range(columns.length-15, columns.length))) {
-				if (i % 1 == 0) {
-					var col = columns[i];
-					emitParticles(col.x, col.y + col.height, 1);
-				}
-
+		for (i in 0...columns.length) {
+			if (i % 5 == 0) {
+				var col = columns[i];
+				emitParticles(col.x, col.y + col.height, 1);
 			}
+
+		}
 
 	}
 	
-	public function consume() {}
+	
 	
 	private function emitParticles(x:Float, y:Float, amt:Int = 1) {
 		for (i in 0...amt) {
@@ -115,19 +115,18 @@ class WaterTop extends Entity {
 	}
 }
 
-class WaterColumn extends Entity {
+class WaterColumn implements IWater extends Entity {
 	var waterBG:Image;
 	var collisionVec:Vector2 = new Vector2();
+	var frameCounter = Random.range(0, 5);
+	public var isContinuous:Bool = true;
 	public function new (x:Float, y:Float) {
 		super(x, y, waterBG);
-	}
-	
-	override public function added() {	
-		this.waterBG = Image.createRect(1, 1, 0x419bde);
-		this.addGraphic(this.waterBG);
+		this.waterBG = new Image("graphics/water-pixel.png");
+		this.graphic = waterBG;
+		this.type = "water";
 	}
 	override public function update() {
-		
 		this.setHitbox(1, 1);
 		scene.collideLine("level", Math.ceil(x), Math.ceil(y), Math.ceil(x), Math.ceil(y + 1000), 1, collisionVec);
 		
@@ -136,4 +135,6 @@ class WaterColumn extends Entity {
 		
 		this.waterBG.scaleY = waterHeight;
 	}
+	
+	public function consume() {}
 }

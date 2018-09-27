@@ -8,6 +8,7 @@ import haxepunk.graphics.Image;
 import haxepunk.graphics.Spritemap.Animation;
 import haxepunk.masks.Imagemask;
 import haxepunk.masks.Pixelmask;
+
 import plants.Plant;
 
 //import com.haxepunk.Sfx;
@@ -44,6 +45,7 @@ class PAnim {
 	public static inline var CLIMB_TIRED = "climb_tired";
 	public static inline var CARRY_TIRED = "carry_tired";
 	public static inline var DEAD = "dead";
+	public static inline var GRAB = "grab";
 }
 class Player extends PhysicsObject {
 	private var img:Spritemap = new Spritemap("graphics/player.png", 16, 16);
@@ -53,7 +55,8 @@ class Player extends PhysicsObject {
 	
 	private var speed:Float = 1;
 	private var normalSpeed:Float = 1;
-	private var carryingSpeed:Float = 0.6;
+	private var carryingSpeed:Float = 0.4;
+	private var pushingSpeed:Float = 0.6;
 	private var jumpCount:Int = 0;
 	private var jumpStrength:Float = 2;
 	private var hoverTime:Float = 0.3;
@@ -67,8 +70,6 @@ class Player extends PhysicsObject {
 	private var addedVelocity:Bool = false;
 	public var inputVector:Vector2 = new Vector2();
 	public var carrying:Carryable;
-	
-	private var liftedOff:Bool = false;
 	private var carryOriginalX:Float = 0;
 	
 	private var climbing:Entity;
@@ -77,14 +78,20 @@ class Player extends PhysicsObject {
 	public var waterLeft:Int = 5;
 	public var waterMax:Int = 5;
 	
-	public var stamina:Float = 5;
-	public var staminaMax:Float = 5;
+	public var stamina:Float = 3;
+	public var staminaMax:Float = 3;
 	public var staminaShowPeriod:Float = 1;
 	private var staminaRefreshDelay:Float = 0.4;
 	private var staminaRefreshCounter:Float = 0;
 	
 	private var resetWait:Float = 1;
 	private var resetTimer:Float = 0;
+	
+	private var deathCheated:Bool = false;
+	
+	private var flipLock:Bool = false;
+	
+	private var usedWingForce:Bool = false;
 	
 	public function new() {
 		super(0, 0, new Graphiclist([img]));
@@ -120,6 +127,7 @@ class Player extends PhysicsObject {
 		img.add(PAnim.CARRY_TIRED, [3]);
 		img.add(PAnim.CLIMB_TIRED, [4]);
 		img.add(PAnim.DEAD, [5]);
+		img.add(PAnim.GRAB, [6]);
 		
 		
 		
@@ -146,7 +154,7 @@ class Player extends PhysicsObject {
 	private function onGroundUpdate():Void {
 		
 		staminaRefreshCounter += HXP.elapsed;
-		if (staminaRefreshCounter > staminaRefreshDelay) {
+		if (staminaRefreshCounter > staminaRefreshDelay && !Input.check(PInput.GRAB)) {
 			stamina = staminaMax;
 		}
 		
@@ -181,13 +189,18 @@ class Player extends PhysicsObject {
 			var right = 	collide("level", x + 3, y);
 			var bottom = 	collide("level", x, y + 1);
 			
-			if (left != null || right != null || bottom != null) this.speed = this.carryingSpeed;
+			if (left != null || right != null || bottom != null) this.speed = this.pushingSpeed;
+			
 			
 			if (left != null && Std.is(left, Carryable)) {
 				this.carrying = cast(left, Carryable);
+				this.img.play(PAnim.GRAB);
+				this.flipLock = true;
 			}
 			else if (right != null && Std.is(right, Carryable)) {
 				this.carrying = cast(right, Carryable);
+				this.img.play(PAnim.GRAB);
+				this.flipLock = true;
 			}
 			else if (bottom != null && Std.is(bottom, Carryable) && stamina == staminaMax) {
 				this.carrying = cast(bottom, Carryable);
@@ -202,9 +215,12 @@ class Player extends PhysicsObject {
 				this.v.x = this.carrying.v.x;
 			}
 		}
+		else {
+			flipLock = false;
+		}
 	}
 	private function onGroundExit():Void {
-		
+		this.flipLock = false;
 	}
 	
 	private function onAirEnter():Void {
@@ -212,6 +228,9 @@ class Player extends PhysicsObject {
 		setHitbox(12, 12, -3, -4);
 	}
 	private function onAirUpdate():Void {
+		
+		this.gravity = v.y > 0 ? fallingGravity : risingGravity;
+		
 		img.play("jump");
 		
 		if (collide("level", x, y+1) != null) {
@@ -243,18 +262,21 @@ class Player extends PhysicsObject {
 	
 	private function onCarryEnter():Void {
 		
-		liftedOff = false;
+		this.gravity = fallingGravity;
+		
+		this.speed = carryingSpeed;
+		
 		setHitbox(20, 10, 2, -6);
 		
 		//carrying.forcesPaused = true;
-		v.y = -gravity - 2;
-		this.carrying.v.y = -gravity - 2;
+		
 		this.x = this.carrying.x + carrying.width / 2 - this.width / 2;
 		
 		if (Std.is(carrying, Seed)) {
 			this.x += 4; // to match seed offset
 		}
 		
+		this.v.y = this.carrying.v.y = -this.gravity - 1;
 		
 		
 	}
@@ -263,22 +285,28 @@ class Player extends PhysicsObject {
 		
 		handleMovement();
 		
-		v.y = -gravity;
+		if (v.y > -gravity && !usedWingForce) v.y = -gravity;
 		
-		this.carrying.v.x = this.v.x;
 		
-		//i hate how i had to do this and will figure out how to get it into a nice function later.
-		this.carrying.x += this.carrying.v.x;
-		this.carrying.resolveCollisions("level", true, false);
-		this.carrying.x -= this.carrying.v.x;
+		
+		if (carrying.collide("level", carrying.x + MathUtil.sign(v.x), carrying.y) != null) {
+			carrying.v.x = 0;
+		}
+		else {
+			carrying.v.x = this.v.x;
+		}
 		
 		this.v.x = this.carrying.v.x;
 		
-		this.carrying.v.y = -gravity;
+		if (Input.check(PInput.JUMP)) {
+			usedWingForce = true;
+			v.y -= 0.19;
+			stamina -= 0.05;
+		}
 		
+		this.carrying.v.y = this.v.y;
+
 		
-		
-		this.carrying.gravity = this.gravity;
 		
 		if (!Input.check(PInput.GRAB)) {
 			fsm.changeState(PlayerState.AIR);
@@ -297,6 +325,7 @@ class Player extends PhysicsObject {
 
 	}
 	private function onCarryExit():Void {
+		usedWingForce = false;
 		carrying.forcesPaused = false;
 		carrying.y += 2;
 		carrying = null;
@@ -380,6 +409,7 @@ class Player extends PhysicsObject {
 	private function onDeadEnter():Void {
 		img.play(PAnim.DEAD);
 		resetTimer = 0;
+		this.collisionsPaused = true;
 		this.type = "";
 	}
 	private function onDeadUpdate():Void {
@@ -411,7 +441,9 @@ class Player extends PhysicsObject {
 
         if (inputVector.x == 0) this.v.x *= friction;
 		var dir = inputVector.normalize();
-		img.flipX = dir.length > 0 ? dir.x > 0 : img.flipX;
+		if (!flipLock) {
+			img.flipX = dir.length > 0 ? dir.x > 0 : img.flipX;
+		}
 		
 	}
 	
@@ -423,7 +455,7 @@ class Player extends PhysicsObject {
 			stamina -= HXP.elapsed;
 		}
 		
-		this.gravity = v.y > 0 ? fallingGravity : risingGravity;
+		
 		inputVector.x = inputVector.y = 0;
 		if (Input.check(PInput.LEFT)) inputVector.x = -1;
 		if (Input.check(PInput.RIGHT)) inputVector.x = 1;
@@ -435,20 +467,20 @@ class Player extends PhysicsObject {
 			cast(water, IWater).consume();
 		}
 		
-		/**
-		 * when would a player die?
-		 * 	when a seed lands on their head
-		 * 	if they collide with something one pixel above and one pixel below
-		 */
 		
-		 if (collide("level", x, y - 1) != null && collide("level", x, y + 1) != null && fsm.currentState != PlayerState.DEAD) {
+		
+		if (collide("level", x, y - 1) != null && collide("level", x, y + 1) != null && fsm.currentState != PlayerState.DEAD && !deathCheated) {
 			 fsm.changeState(PlayerState.DEAD);
 		 }
-		
-		
-		super.update();
-		
-		
+		 else {
+			 deathCheated = true;
+		 }
+		 
+		 if (collide("flag", x, y) != null && fsm.currentState != PlayerState.DEAD) {
+			 cast(scene, GameScene).completeLevel();
+		 }
+		 
+		 super.update();
 	}
 
 	

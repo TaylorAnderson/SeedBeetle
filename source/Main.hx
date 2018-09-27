@@ -3,6 +3,8 @@ import com.haxepunk.HXP;
 import haxepunk.Graphic;
 import haxepunk.debug.Console;
 import haxepunk.pixel.PixelArtScaler;
+import openfl.Lib;
+import openfl.display.FPS;
 
 
 class Main extends Engine
@@ -20,10 +22,16 @@ class Main extends Engine
 		
 		Graphic.smoothDefault = false;
 		Graphic.pixelSnappingDefault = true;
-		PixelArtScaler.globalActivate();
+		//PixelArtScaler.globalActivate();
 		
 		HXP.resize(960, 640);
-		HXP.scene = new GameScene();
+		HXP.scene = new TitleScene();
+		
+		var fps:FPS = new FPS(10, 10, 0);
+		var format = fps.defaultTextFormat;
+		format.size = 20;
+		fps.defaultTextFormat = format;
+		//Lib.current.stage.addChild(fps);
 	}
 
 	public static function main() { new Main(); }

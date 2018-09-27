@@ -21,7 +21,6 @@ class Beanstalk extends Plant {
 
 	public function new(x:Float=0, y:Float=0) {
 		super(x, y);
-		type = "level";
 		this.climbable = true;
 		
 		
@@ -31,7 +30,7 @@ class Beanstalk extends Plant {
 		addBlock();
 		var cover = new BeanBlock(x, y);
 		scene.add(cover);
-		cover.layer = Layers.BG_LEVEL - 1;
+		cover.layer = Layers.ENTITIES - 1;
 	}
 	override public function update() {
 		if (blocks.length < length) {
@@ -64,17 +63,6 @@ class BeanBlock extends Plant {
 		this.climbable = true;
 		setHitbox(16, 16);
 		this.img.x = 18 / 2 - this.img.width / 2;
-		this.layer = Layers.BG_LEVEL;
-	}
-	override public function update() {
-		var objectsAbove:Array<Entity> = [];
-		collideInto("level", x, y, objectsAbove);
-		for (obj in objectsAbove) {
-			if (Std.is(obj, PhysicsObject)) {
-				obj.y -= 1;
-			}
-			
-			
-		}
+		this.layer = Layers.ENTITIES-1;
 	}
 }

@@ -35,9 +35,16 @@ class BigBug extends PhysicsObject {
 	private var windupTime:Float = 0.3;
 	
 	private var headbuttDir:Float = 0;
+	
+	private var branch:BugBranch = new BugBranch(0, 0);
+	
+	private var interval:Float;
+	private var counter = 0;
 	public function new(x:Float=0, y:Float=0) {
 		super(x, y, img);
-		setHitbox(50, 33, 0, -3);
+		
+		interval = 1 / speed;
+		setHitbox(50, 30, 0, -6);
 		
 		fsm.bind(BigBugState.WALKING, onWalkEnter, onWalkUpdate, onWalkExit);
 		fsm.bind(BigBugState.WINDING_UP, onWindupEnter, onWindupUpdate, onWindupExit);
@@ -47,22 +54,29 @@ class BigBug extends PhysicsObject {
 		this.friction = 1;
 		
 		
-		footingCheck.setHitbox(cast(this.width/4), 2);
+		footingCheck.setHitbox(cast(this.width / 4), 2);
 		
+
+		this.collisionsPaused = true;
+		
+		this.layer = Layers.ENTITIES;
 		
 		
 	}
 	
 	override public function added() {
 		this.scene.add(footingCheck);
+		this.scene.add(branch);
 	}
 	
 	override public function update() {
+		this.branch.x = this.x+1;
+		this.branch.y = this.y;
 		super.update();
 		fsm.update();
 		
 		
-		
+
 	}
 	
 	private function onWalkEnter() {
@@ -71,6 +85,7 @@ class BigBug extends PhysicsObject {
 	private function onWalkUpdate() {
 		img.flipped = v.x > 0;
 		var inFront = collide("level", x + MathUtil.sign(v.x), y);
+		if (inFront == branch) inFront = null;
 		if (inFront != null) {
 			if (Std.is(inFront, PhysicsObject)) {
 				positionToHeadbutt = inFront.x;
@@ -84,7 +99,7 @@ class BigBug extends PhysicsObject {
 		
 		this.footingCheck.x = this.x + MathUtil.sign(v.x) * this.footingCheck.width;
 		if (v.x > 0) this.footingCheck.x = this.x + this.width;
-		this.footingCheck.y = this.y + this.height + 3;
+		this.footingCheck.y = this.bottom;
 		
 		if (footingCheck.collide("level", footingCheck.x, footingCheck.y) == null) {
 			v.x *= -1;
@@ -133,4 +148,23 @@ class BigBug extends PhysicsObject {
 		
 	}
 	
+	override public function moveCollideX(e:Entity) {
+		if (e == branch) return true;
+		else return super.moveCollideX(e);
+	}
+		override public function moveCollideY(e:Entity) {
+		if (e == branch) return true;
+		else return super.moveCollideY(e);
+	}
+	
+}
+
+class BugBranch extends Mover {
+	
+	public function new(x:Float=0, y:Float=0) {
+		super(x, y, new Image("graphics/big-branch.png"));
+		setHitbox(42, 6);
+		type = "level";
+		
+	}
 }

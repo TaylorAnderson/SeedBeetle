@@ -82,7 +82,7 @@ class LevelChunk extends Entity {
 		}
 		
 		for (s in fastXml.node.Entities.nodes.Seed) {
-			var seed = new Seed(Std.parseInt(s.att.x), Std.parseInt(s.att.y));
+			var seed = new Seed(Std.parseInt(s.att.x), Std.parseInt(s.att.y), Std.parseInt(s.att.seedIndex));
 			this.scene.add(seed);
 		}
 		for (s in fastXml.node.Entities.nodes.BigWaterfall) {
@@ -96,6 +96,10 @@ class LevelChunk extends Entity {
 		for (s in fastXml.node.Entities.nodes.BigBug) {
 			var bug = new BigBug(Std.parseInt(s.att.x), Std.parseInt(s.att.y));
 			scene.add(bug);
+		}
+		for (s in fastXml.node.Entities.nodes.Flag) {
+			var flag = new Flag(Std.parseInt(s.att.x), Std.parseInt(s.att.y));
+			scene.add(flag);
 		}
 		
 		

@@ -20,10 +20,10 @@ class WaterMeter extends Entity {
 		super();
 		img.scrollX = img.scrollY = 0;
 		bg.scrollX = bg.scrollY = 0;
-		bg.x = HXP.width - bg.width - 8;
-		bg.y = 8;
-		img.x = bg.x + bg.width / 2 - img.width / 2 - 2;
-		img.y = bg.y + bg.height / 2 - img.height / 2 - 1;
+		bg.x = HXP.width/2 - bg.width/2;
+		bg.y = -20;
+		img.x = bg.x + bg.width / 2 - img.width / 2 - 3;
+		img.y = bg.y + bg.height - img.height;
 		
 		bg.centerOrigin();
 		bg.x += bg.width / 2;
