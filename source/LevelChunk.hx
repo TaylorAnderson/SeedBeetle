@@ -5,6 +5,7 @@ import haxepunk.Entity;
 import haxepunk.HXP;
 import haxepunk.graphics.tile.Tilemap;
 import haxepunk.masks.Grid;
+import plants.SwitchBlossom.SwitchColors;
 
 import openfl.Assets;
 
@@ -19,7 +20,7 @@ class LevelChunk extends Entity {
 	var tiles:Tilemap; 
 	var bgTiles:Tilemap;
 	var decoTiles:Tilemap;
-	var grid:Grid;
+	public var grid:Grid; //need it to create navgrid for switchblossom
 	var player:Player;
 	var level:String;
 	public var levelWidth:Int;

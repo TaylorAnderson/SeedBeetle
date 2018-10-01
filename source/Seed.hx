@@ -16,6 +16,7 @@ enum SeedType {
 	BEANSTALK;
 	BUSHPLANT;
 	MUSHROOM;
+	SWITCH;
 }
 class Seed extends Carryable {
 
@@ -69,6 +70,8 @@ class Seed extends Carryable {
 			case SeedType.BEANSTALK: 
 				this.scene.add(new Beanstalk(this.left, this.y));
 			case SeedType.MUSHROOM:
+			case SeedType.SWITCH:
+				
 				
 		}
 		scene.remove(this);

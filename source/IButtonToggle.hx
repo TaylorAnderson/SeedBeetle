@@ -1,11 +1,11 @@
 package;
+import flash.geom.Point;
 
 /**
  * ...
  * @author Taylor
  */
-interface IButtonToggle {
+interface ISwitchObject {
 	function activate():Void;
-	function deactivate():Void;
-	
+	function getAttachments():Array<Point>;	
 }

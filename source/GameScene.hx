@@ -14,7 +14,7 @@ import openfl.Assets;
 
 class GameScene extends Scene {
 	private var player:Player;
-	private var level:LevelChunk;
+	public var level:LevelChunk;
 	private var snappedCamera:Bool = false;
 	public var isLevelComplete:Bool = false;
 	
