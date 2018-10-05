@@ -13,23 +13,20 @@ import haxepunk.graphics.Image;
 class SwitchTest extends Entity implements ISwitchObject 
 {
 
-	
-	public function new(x:Float=0, y:Float=0, ?graphic:Graphic, ?mask:Mask) 
+	public var color:Int;
+	public function new(x:Float=0, y:Float=0, color:Int) 
 	{
 		super(x, y, Image.createRect(16, 16, 0xFF0000));
-		
+		this.color = color;
+		setHitbox(16, 16);
 	}
 	
 	
 	/* INTERFACE ISwitchObject */
 	
 	public function activate():Void  {
-		this.graphic = Image.createRect(16, 16, 0);
+		this.graphic = Image.createRect(16, 16, 0xFFFFFF);
 	}
 	
-	public function getAttachments():Array<Point> 
-	{
-		
-	}
 	
 }

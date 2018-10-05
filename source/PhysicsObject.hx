@@ -5,7 +5,6 @@ import haxepunk.Entity;
 import haxepunk.Graphic;
 import haxepunk.HXP;
 import haxepunk.Mask;
-import haxepunk.ai.behaviors.Action;
 import haxepunk.masks.Grid;
 import haxepunk.masks.Imagemask;
 import haxepunk.masks.Pixelmask;

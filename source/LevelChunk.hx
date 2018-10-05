@@ -19,7 +19,7 @@ class LevelChunk extends Entity {
 	
 	var tiles:Tilemap; 
 	var bgTiles:Tilemap;
-	var decoTiles:Tilemap;
+	public var decoTiles:Tilemap;
 	public var grid:Grid; //need it to create navgrid for switchblossom
 	var player:Player;
 	var level:String;
@@ -83,7 +83,7 @@ class LevelChunk extends Entity {
 		}
 		
 		for (s in fastXml.node.Entities.nodes.Seed) {
-			var seed = new Seed(Std.parseInt(s.att.x), Std.parseInt(s.att.y), Std.parseInt(s.att.seedIndex));
+			var seed = new Seed(Std.parseInt(s.att.x), Std.parseInt(s.att.y), Std.parseInt(s.att.seedIndex), Std.parseInt(s.att.seedColor));
 			this.scene.add(seed);
 		}
 		for (s in fastXml.node.Entities.nodes.BigWaterfall) {
@@ -101,6 +101,19 @@ class LevelChunk extends Entity {
 		for (s in fastXml.node.Entities.nodes.Flag) {
 			var flag = new Flag(Std.parseInt(s.att.x), Std.parseInt(s.att.y));
 			scene.add(flag);
+		}
+		
+		for (s in fastXml.node.Entities.nodes.SwitchTest) {
+			var test = new SwitchTest(Std.parseInt(s.att.x), Std.parseInt(s.att.y), Std.parseInt(s.att.seedColor));
+			scene.add(test);
+		}
+		for (s in fastXml.node.Entities.nodes.GateVert) {
+			var gate = new GateVertical(Std.parseInt(s.att.x), Std.parseInt(s.att.y), Std.parseInt(s.att.height), Std.parseInt(s.att.seedColor));
+			scene.add(gate);
+		}
+		for (s in fastXml.node.Entities.nodes.GateHoriz) {
+			var gate = new GateHorizontal(Std.parseInt(s.att.x), Std.parseInt(s.att.y), Std.parseInt(s.att.width), Std.parseInt(s.att.seedColor));
+			scene.add(gate);
 		}
 		
 		

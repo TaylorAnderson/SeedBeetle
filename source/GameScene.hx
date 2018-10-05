@@ -69,6 +69,17 @@ class GameScene extends Scene {
 	public function reset() {
 		HXP.scene = new GameScene(this.levelIndex);
 	}
+	
+	public function getEntityWithSeedColor(color:Int) {
+		var all:Array<Entity> = [];
+		this.getAll(all);
+		for (e in all) {
+			if (Std.is(e, ISwitchObject) && cast(e, ISwitchObject).color == color) {
+				return cast(e, ISwitchObject);
+			}
+		}
+		return null;
+	}
 
 	public override function update() {
 		allEntities = [];
