@@ -75,13 +75,13 @@ class Player extends PhysicsObject {
 	private var climbing:Entity;
 	private var climbingPos:Float;
 	
-	public var waterLeft:Int = 5;
-	public var waterMax:Int = 5;
+	public var waterLeft:Int = 6;
+	public var waterMax:Int = 6;
 	
 	public var stamina:Float = 3;
 	public var staminaMax:Float = 3;
 	public var staminaShowPeriod:Float = 1;
-	private var staminaRefreshDelay:Float = 0.4;
+	private var staminaRefreshDelay:Float = 0.2;
 	private var staminaRefreshCounter:Float = 0;
 	
 	private var resetWait:Float = 1;
@@ -225,6 +225,7 @@ class Player extends PhysicsObject {
 	
 	private function onAirEnter():Void {
 		this.friction = airFriction;
+		this.speed = this.normalSpeed;
 		setHitbox(12, 12, -3, -4);
 	}
 	private function onAirUpdate():Void {
@@ -266,28 +267,24 @@ class Player extends PhysicsObject {
 		
 		this.speed = carryingSpeed;
 		
-		setHitbox(20, 10, 2, -6);
+		setHitbox(20, 12, 2, -4);
 		
-		//carrying.forcesPaused = true;
 		
 		this.x = this.carrying.x + carrying.width / 2 - this.width / 2;
+		
 		
 		if (Std.is(carrying, Seed)) {
 			this.x += 4; // to match seed offset
 		}
 		
-		this.v.y = this.carrying.v.y = -this.gravity - 1;
-		
+		this.v.y = this.carrying.v.y = -this.gravity-1;
+		this.carrying.y = this.y + this.height;
 		
 	}
 	private function onCarryUpdate():Void {
-
-		
 		handleMovement();
 		
 		if (v.y > -gravity && !usedWingForce) v.y = -gravity;
-		
-		
 		
 		if (carrying.collide("level", carrying.x + MathUtil.sign(v.x), carrying.y) != null) {
 			carrying.v.x = 0;
@@ -298,15 +295,15 @@ class Player extends PhysicsObject {
 		
 		this.v.x = this.carrying.v.x;
 		
+		
+		
 		if (Input.check(PInput.JUMP)) {
 			usedWingForce = true;
-			v.y -= 0.19;
+			v.y -= 0.16;
 			stamina -= 0.05;
 		}
 		
 		this.carrying.v.y = this.v.y;
-
-		
 		
 		if (!Input.check(PInput.GRAB)) {
 			fsm.changeState(PlayerState.AIR);
@@ -322,6 +319,8 @@ class Player extends PhysicsObject {
 		if (stamina < 0) {
 			fsm.changeState(PlayerState.AIR);
 		}
+		
+		
 
 	}
 	private function onCarryExit():Void {
@@ -329,6 +328,7 @@ class Player extends PhysicsObject {
 		carrying.forcesPaused = false;
 		carrying.y += 2;
 		carrying = null;
+		
 	}
 	
 	private function onClimbEnter():Void {

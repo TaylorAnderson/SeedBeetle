@@ -18,93 +18,121 @@ class SwitchRoot extends Entity {
 	var path:Array<PathNode> = [];
 	var rootGrid:RootGrid;
 	var target:ISwitchObject;
-	var topLeft = 0;
-	var topMid = 1;
-	var topRight = 2;
-	var midLeft = 3;
-	var midCenter = 4;
-	var midRight = 5;
-	var bottomLeft = 6;
-	var bottomMid = 7;
-	var bottomRight = 8;
 	
 	var tiles:Array <RootTile> = [];
 	var endPos:Point = new Point();
-	public function new(start:Point, target:ISwitchObject, rootGrid:RootGrid) {
+	
+	var seedColor:Int;
+	public function new(start:Point, target:ISwitchObject, rootGrid:RootGrid, seedColor:Int) {
 		super(start.x, start.y);
 		this.rootGrid = rootGrid;
 		this.target = target;
+		this.seedColor = seedColor;
 	}
 	override public function added() {
+		this.scene.add(rootGrid);
 		
-		var entTarget = cast(target, Entity);
-		var otherPos = new Point();
-		if (this.x > entTarget.x) otherPos.x = entTarget.right;
-		else otherPos.x = entTarget.left;
-		if (this.y > entTarget.y) otherPos.y = entTarget.bottom;
-		else otherPos.y = entTarget.top;
-		
-		this.endPos = new Point(entTarget.x + entTarget.width/2, entTarget.y + entTarget.height/2);
-		
-		var thisGridPos = rootGrid.nodeGraph.getClosestNode(this.x/Global.GS, this.y/Global.GS);
-		var otherGridPos = rootGrid.nodeGraph.getClosestNode(otherPos.x / Global.GS, otherPos.y / Global.GS);
-		path = rootGrid.nodeGraph.search(thisGridPos.x, thisGridPos.y, otherGridPos.x, otherGridPos.y);
-		
-		if (path != null) {
-			if (path[path.length - 1].x == otherGridPos.x && path[path.length - 1].y == otherGridPos.y) {
-				//target.activate();
-			}
-				
-			var currentDir = new Point(path[1].x - path[0].x, path[1].y - path[0].y);
-			currentDir.normalize(1);
+		rootGrid.onGridLoaded = function() {
+			var entTarget = cast(target, Entity);
 			
-			var speed = 0.2;
-			var delay:Float = 0;
-			for (i in 0...path.length - 1) {
-				currentDir = new Point(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y);
-				currentDir.normalize(1);
-				for (j in 0...Std.int(MathUtil.distance(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y))) {
-					delay += speed;
-					createRootTile((path[i].x + currentDir.x*j)*Global.GS, (path[i].y + currentDir.y*j)*Global.GS, path[i+1], delay);
+			var positions = [
+				new Point(entTarget.left + entTarget.width/2, entTarget.top),
+				new Point(entTarget.left + entTarget.width/2, entTarget.bottom),
+				new Point(entTarget.left, entTarget.top + entTarget.height/2),
+				new Point(entTarget.right, entTarget.top + entTarget.height/2)
+			];
+			var closestDist = MathUtil.NUMBER_MAX_VALUE;
+						
+			var thisGridPos = rootGrid.nodeGraph.getClosestNode(this.x/Global.GS, this.y/Global.GS);
+			var otherGridPos:PathNode = null;
+			for (pos in positions) {
+				var closestGridPos = rootGrid.nodeGraph.getClosestNode(pos.x/Global.GS, pos.y/Global.GS);
+				var distToGrid = MathUtil.distance(closestGridPos.x*Global.GS, closestGridPos.y*Global.GS, pos.x, pos.y);
+				if (distToGrid < closestDist) {
+					closestDist = distToGrid;
+					otherGridPos = closestGridPos;
 				}
 			}
-			createRootTile(path[path.length - 1].x * Global.GS, path[path.length - 1].y  * Global.GS, path[path.length - 1], delay+speed);
-		}
-		
-		for (i in 0...tiles.length) {
-			var tile = tiles[i];
-			var index = 0;
-			var prevPos = new Point();
-			var nextPos = new Point();
 			
-			if (tiles[i - 1] == null) {
-				if (Math.abs(tile.x - this.x) > Math.abs(tile.y - this.y)) prevPos.x = tile.x + MathUtil.sign(this.x - tile.x) * Global.GS;
-				else prevPos.y = tile.y + MathUtil.sign(this.y - tile.y) * Global.GS;
-			}
-			else prevPos = new Point(tiles[i - 1].x, tiles[i - 1].y);
-			
+			//var sq = new Entity(otherGridPos.x * Global.GS, otherGridPos.y * Global.GS, Image.createRect(Global.GS, Global.GS));
+			//this.scene.add(sq);
+			//sq.layer = -1000;
 
-			if (tiles[i+1] != null) nextPos = new Point(tiles[i + 1].x, tiles[i + 1].y);
 			
-			if (prevPos.x == nextPos.x) index = midLeft;
-			if (prevPos.y == nextPos.y) index = topMid;
-			if (prevPos.x > nextPos.x) {
-				if (prevPos.y < nextPos.y) index = bottomRight;
-				if (prevPos.y > nextPos.y) index = topRight;
-			}
-			if (prevPos.x < nextPos.x) {
-				if (prevPos.y < nextPos.y) index = bottomLeft;
-				if (prevPos.y > nextPos.y) index = bottomRight;
-			}
+			path = rootGrid.nodeGraph.search(thisGridPos.x, thisGridPos.y, otherGridPos.x, otherGridPos.y);
 			
-			if (tiles[i + 1] == null) {
-				//if (Math.abs(tile.x - endPos.x) > Math.abs(tile.y - endPos.y)) nextPos.x = tile.x + MathUtil.sign(endPos.x - tile.x) * Global.GS;
-				//else nextPos.y = tile.y + MathUtil.sign(endPos.y - tile.y) * Global.GS;
+			if (path != null) {
+					
+				var currentDir = new Point(path[1].x - path[0].x, path[1].y - path[0].y);
+				currentDir.normalize(1);
 				
-				index = 4;
+				var speed = 0.2;
+				var delay:Float = 0;
+				for (i in 0...path.length - 1) {
+					currentDir = new Point(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y);
+					currentDir.normalize(1);
+					for (j in 0...Std.int(MathUtil.distance(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y))) {
+						delay += speed;
+						createRootTile((path[i].x + currentDir.x*j)*Global.GS, (path[i].y + currentDir.y*j)*Global.GS, path[i+1], delay);
+					}
+				}
+				createRootTile(path[path.length - 1].x * Global.GS, path[path.length - 1].y  * Global.GS, path[path.length - 1], delay+speed);
 			}
 			
-			tile.sprMap.frame = index;
+			for (i in 0...tiles.length) {
+				var tile = tiles[i];
+				var index = -1;
+				var prevPos:RootTile = null;
+				var nextPos:RootTile = null;
+				
+				if (tiles[i - 1] == null) {
+					prevPos = new RootTile(tile.x, tile.y - Global.GS, null);
+				}
+				else prevPos = tiles[i - 1];
+				
+				nextPos = new RootTile(0, 0, null);
+
+				if (tiles[i + 1] != null) nextPos = tiles[i + 1];	
+				
+				if (prevPos != null) {
+					if (prevPos.x == nextPos.x) index = 3;
+					if (prevPos.y == nextPos.y) index = 1;
+				}
+
+				
+				if (tiles[i + 1] == null) {
+					   index = 4;
+				}
+				
+				if (index == -1) {
+					var curTile = tiles[i];
+					var prevLeft = 		prevPos.x < curTile.x;
+					var prevRight = 	prevPos.x > curTile.x;
+					var prevBelow = 	prevPos.y > curTile.y;
+					var prevAbove = 	prevPos.y < curTile.y;
+
+
+					var nextLeft = 		nextPos.x < curTile.x;
+					var nextRight = 	nextPos.x > curTile.x;
+					var nextBelow = 	nextPos.y > curTile.y;
+					var nextAbove = 	nextPos.y < curTile.y;
+					
+					var above = 	nextAbove || prevAbove;
+					var below = 	nextBelow || prevBelow;
+					var left = 		prevLeft || nextLeft;
+					var right = 	prevRight || nextRight;
+					
+					if (below && right) index = 0;
+					if (below && left) index = 2;
+					if (above && right) index = 6;
+					if (above && left) index = 8;
+				}
+				
+					
+				
+				
+				tile.sprMap.frame = index+seedColor*9;
+			}
 		}
 	}
 	
@@ -125,8 +153,7 @@ class RootTile extends Entity {
 	public var pathDest:PathNode;
 	public function new(x:Float, y:Float, pathDest:PathNode) {
 		super(x, y, this.sprMap);
-		trace("Getting herE");
 		this.pathDest = pathDest;
-		this.layer = -1000;
+		this.layer = Layers.LEVEL - 1;
 	}
 }

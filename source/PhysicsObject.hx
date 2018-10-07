@@ -24,6 +24,7 @@ class PhysicsObject extends Entity {
 	public var v:Vector2 = new Vector2();
 	public var forcesPaused:Bool = false;
 	public var collisionsPaused:Bool = false;
+	private var entitiesToIgnore = [];
 	public function new(x:Float = 0, y:Float = 0, ?graphic:Graphic, ?mask:Mask) {
 		super(x, y, graphic, mask);
 		
@@ -41,6 +42,12 @@ class PhysicsObject extends Entity {
 			var cols:Array<Entity> = [];
 			this.collideInto("level", x, y, cols);
 			for (colObj in cols) {
+				var ignoreThis = false;
+				for (ent in entitiesToIgnore) {
+					if (colObj == ent) ignoreThis = true;
+				}
+				if (ignoreThis) continue;
+				
 				var colBounds = this.getBounds(colObj);
 				var thisBounds = this.getBounds(this);
 				if (Std.is(colObj, PhysicsObject)) {
@@ -91,11 +98,12 @@ class PhysicsObject extends Entity {
 		}
 	}
 	
-	public function getMovement(objAbove:Entity = null):Float {
+	public function getMovement(objAbove:Entity = null, iteration:Float = 1):Float {
+		if (iteration > 10) return 0;
 		var below = collide("level", x, y + 1);
 		if (below != null) {
 			if (Std.is(below, PhysicsObject) && below != objAbove) {
-				return cast(below, PhysicsObject).getMovement();
+				return cast(below, PhysicsObject).getMovement(null, iteration+1);
 			}
 			if (Std.is(below, Mover)) {
 				return cast(below, Mover).movement;

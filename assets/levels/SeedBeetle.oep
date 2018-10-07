@@ -74,18 +74,6 @@
       </ScrollFactor>
       <ExportMode>CSV</ExportMode>
     </LayerDefinition>
-    <LayerDefinition xsi:type="TileLayerDefinition">
-      <Name>CaveTiles</Name>
-      <Grid>
-        <Width>8</Width>
-        <Height>8</Height>
-      </Grid>
-      <ScrollFactor>
-        <X>1</X>
-        <Y>1</Y>
-      </ScrollFactor>
-      <ExportMode>CSV</ExportMode>
-    </LayerDefinition>
   </LayerDefinitions>
   <Tilesets>
     <Tileset>

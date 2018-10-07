@@ -2,6 +2,7 @@ import com.haxepunk.Engine;
 import com.haxepunk.HXP;
 import haxepunk.Graphic;
 import haxepunk.debug.Console;
+import haxepunk.pixel.PixelArtScaler;
 // import haxepunk.pixel.PixelArtScaler;
 import openfl.Lib;
 import openfl.display.FPS;

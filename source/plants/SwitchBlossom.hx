@@ -39,7 +39,7 @@ class SwitchBlossom extends Plant
 		
 		this.target = cast(scene, GameScene).getEntityWithSeedColor(this.color);
 		
-		this.scene.add(new SwitchRoot(new Point(this.x, this.y + Global.GS), target, this.rootGrid));
+		this.scene.add(new SwitchRoot(new Point(this.x, this.y + Global.GS), target, this.rootGrid, this.color));
 	}
 
 	

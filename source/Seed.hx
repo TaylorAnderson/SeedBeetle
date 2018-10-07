@@ -21,7 +21,7 @@ enum SeedType {
 class Seed extends Carryable {
 
 	public static var SeedTypes = [SeedType.BEANSTALK, SeedType.BUSHPLANT, SeedType.SWITCH];
-	private var img:Image = new Image("graphics/seed.png");
+	private var img:Spritemap = new Spritemap("graphics/seed.png", 18, 16);
 	private var seed:Spritemap = new Spritemap("graphics/seeds.png", 8, 10);
 	private var waterNeeded = 3;
 	private var waterDelay:Float = 0.5;
@@ -42,14 +42,17 @@ class Seed extends Carryable {
 		type = "level";
 		name = "seed";
 		layer = Layers.ENTITIES + 1;
+		img.frame = 0;
 		
 		seed.frame = seedIndex;
-		if (Seed.SeedTypes[seedIndex] == SeedType.SWITCH) seed.frame ++;
+		if (Seed.SeedTypes[seedIndex] == SeedType.SWITCH) seed.frame +=seedColor;
 		this.seedType = Seed.SeedTypes[seedIndex];
 		
 	}
 	override public function update() {
 		super.update();
+		
+		img.frame = 3 - waterNeeded;
 		
 		var water = collide("water", x, y);
 		
