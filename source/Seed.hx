@@ -7,6 +7,7 @@ import haxepunk.graphics.Image;
 import haxepunk.graphics.Spritemap;
 import plants.Beanstalk;
 import plants.BushBranch;
+import plants.SwitchBlossom;
 
 /**
  * ...
@@ -15,23 +16,25 @@ import plants.BushBranch;
 enum SeedType {
 	BEANSTALK;
 	BUSHPLANT;
-	MUSHROOM;
 	SWITCH;
 }
 class Seed extends Carryable {
 
-	public static var SeedTypes = [SeedType.BEANSTALK, SeedType.BUSHPLANT];
-	private var img:Image = new Image("graphics/seed.png");
+	public static var SeedTypes = [SeedType.BEANSTALK, SeedType.BUSHPLANT, SeedType.SWITCH];
+	private var img:Spritemap = new Spritemap("graphics/seed.png", 18, 16);
 	private var seed:Spritemap = new Spritemap("graphics/seeds.png", 8, 10);
 	private var waterNeeded = 3;
 	private var waterDelay:Float = 0.5;
 	private var waterDelayTimer:Float = 0;
 	
-	public var seedType:SeedType = SeedType.BUSHPLANT; //for testing; we're gonna set this by reading the data coming from ogmo.
-	public function new(x:Float=0, y:Float=0, seedIndex:Int) {
+	public var seedType:SeedType;
+	public var seedColor:Int;
+	public function new(x:Float=0, y:Float=0, seedIndex:Int, seedColor:Int) {
 		super(x, y);
 		addGraphic(img);
 		addGraphic(seed);
+		
+		this.seedColor = seedColor;
 		
 		seed.x = 7;
 		seed.y = 3;
@@ -39,13 +42,17 @@ class Seed extends Carryable {
 		type = "level";
 		name = "seed";
 		layer = Layers.ENTITIES + 1;
+		img.frame = 0;
 		
 		seed.frame = seedIndex;
+		if (Seed.SeedTypes[seedIndex] == SeedType.SWITCH) seed.frame +=seedColor;
 		this.seedType = Seed.SeedTypes[seedIndex];
 		
 	}
 	override public function update() {
 		super.update();
+		
+		img.frame = 3 - waterNeeded;
 		
 		var water = collide("water", x, y);
 		
@@ -69,11 +76,12 @@ class Seed extends Carryable {
 				this.scene.add(new BushBranch(this.left, this.y));
 			case SeedType.BEANSTALK: 
 				this.scene.add(new Beanstalk(this.left, this.y));
-			case SeedType.MUSHROOM:
 			case SeedType.SWITCH:
+				scene.remove(this); //so we cant count this seed when constructing nav-grid
+				this.scene.add(new SwitchBlossom(this.left, this.bottom - 8, this.seedColor));
 				
 				
 		}
-		scene.remove(this);
+		if (scene != null) scene.remove(this);
 	}
 }

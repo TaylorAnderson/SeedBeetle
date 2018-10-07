@@ -16,7 +16,7 @@
     <Width>480</Width>
     <Height>320</Height>
   </LevelMaximumSize>
-  <Filename>C:\Users\taylo\Documents\Game Projects\HaxePunk Projects\SeedBeetle\assets\levels\SeedBeetle.oep</Filename>
+  <Filename>D:\Game Projects\HaxePunk Projects\SeedBeetle\assets\levels\SeedBeetle.oep</Filename>
   <AngleMode>Radians</AngleMode>
   <CameraEnabled>false</CameraEnabled>
   <CameraSize>
@@ -115,7 +115,7 @@
         <RectColor A="255" R="255" G="0" B="0" />
       </ImageDefinition>
       <ValueDefinitions>
-        <ValueDefinition xsi:type="IntValueDefinition" Name="seedIndex" Default="0" Min="0" Max="1" ShowSlider="false" />
+        <ValueDefinition xsi:type="IntValueDefinition" Name="seedIndex" Default="0" Min="0" Max="2" ShowSlider="false" />
         <ValueDefinition xsi:type="IntValueDefinition" Name="seedColor" Default="0" Min="0" Max="1" ShowSlider="false" />
       </ValueDefinitions>
       <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
@@ -226,6 +226,40 @@
       </ImageDefinition>
       <ValueDefinitions>
         <ValueDefinition xsi:type="IntValueDefinition" Name="seedColor" Default="0" Min="0" Max="1" ShowSlider="false" />
+      </ValueDefinitions>
+      <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
+    </EntityDefinition>
+    <EntityDefinition Name="GateVert" Limit="-1" ResizableX="false" ResizableY="true" Rotatable="false" RotateIncrement="15">
+      <Size>
+        <Width>8</Width>
+        <Height>8</Height>
+      </Size>
+      <Origin>
+        <X>0</X>
+        <Y>0</Y>
+      </Origin>
+      <ImageDefinition DrawMode="Rectangle" ImagePath="" Tiled="false">
+        <RectColor A="255" R="255" G="128" B="64" />
+      </ImageDefinition>
+      <ValueDefinitions>
+        <ValueDefinition xsi:type="IntValueDefinition" Name="seedColor" Default="0" Min="0" Max="2" ShowSlider="false" />
+      </ValueDefinitions>
+      <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
+    </EntityDefinition>
+    <EntityDefinition Name="GateHoriz" Limit="-1" ResizableX="true" ResizableY="false" Rotatable="false" RotateIncrement="15">
+      <Size>
+        <Width>8</Width>
+        <Height>8</Height>
+      </Size>
+      <Origin>
+        <X>0</X>
+        <Y>0</Y>
+      </Origin>
+      <ImageDefinition DrawMode="Rectangle" ImagePath="" Tiled="false">
+        <RectColor A="255" R="255" G="128" B="0" />
+      </ImageDefinition>
+      <ValueDefinitions>
+        <ValueDefinition xsi:type="IntValueDefinition" Name="seedColor" Default="0" Min="0" Max="2" ShowSlider="false" />
       </ValueDefinitions>
       <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
     </EntityDefinition>
