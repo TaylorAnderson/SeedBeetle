@@ -8,16 +8,17 @@ import haxepunk.input.InputType;
 import haxepunk.input.Key;
 import haxepunk.math.MathUtil;
 import haxepunk.math.Vector2;
+import level_editor.Editor;
 import motion.Actuate;
 import motion.easing.Back;
 import openfl.Assets;
+import openfl.Lib;
 
 class GameScene extends Scene {
 	private var player:Player;
 	public var level:LevelChunk;
 	private var snappedCamera:Bool = false;
 	public var isLevelComplete:Bool = false;
-	
 	private var levelCompleteLogo:Entity;
 	private var levelCompleteBG:Entity;
 	private var levelIndex:Int;
@@ -26,10 +27,16 @@ class GameScene extends Scene {
 	
 	private var camX:Float = 0;
 	private var camY:Float = 0;
+	public var paused:Bool = false;
+	public var entitiesToUpdateDuringPause:Array<Entity> = [];
+	
+	public var inEditorMode = false;
+	
+	public var editor:Editor;
 	public function new(levelIndex:Int ) {
 		super();
 		this.levelIndex = levelIndex;
-
+		this.editor = new Editor("levels/leveleditortest.json");
 	
 	}
 
@@ -44,6 +51,7 @@ class GameScene extends Scene {
 		this.add(new WaterMeter());
 
 		Key.define("RESET", [Key.R]);
+		Key.define("EDITOR", [Key.ESCAPE]);
 
 		HXP.camera.pixelSnapping = true;
 		
@@ -86,12 +94,17 @@ class GameScene extends Scene {
 		this.getAll(allEntities);
 		
 
-		if (!isLevelComplete) {
+		if (!isLevelComplete && !paused) {
 			super.update();
 		}
-		else {
+		if (isLevelComplete) {
 			this.updateEntity(levelCompleteBG);
 			this.updateEntity(levelCompleteLogo);
+		}
+		if (paused) {
+			for (entity in entitiesToUpdateDuringPause) {
+				this.updateEntity(entity);
+			}
 		}
 		
 		
@@ -99,6 +112,20 @@ class GameScene extends Scene {
 
 		if (Input.pressed("RESET")) {
 			reset();
+		}
+		if (Input.pressed("EDITOR")) {
+			inEditorMode = !inEditorMode;
+			
+			if (inEditorMode) {
+				this.paused = true;
+				//we'll want to give this data to actually load the level we're in but....later
+				Lib.current.stage.addChild(this.editor);
+			}
+			else {
+				this.paused = false;
+				Lib.current.stage.removeChild(this.editor);
+			}
+
 		}
 
 		if (!snappedCamera) {

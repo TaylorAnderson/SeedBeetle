@@ -76,6 +76,9 @@ class LevelChunk extends Entity {
 		
 		decoEntity.layer = Layers.LEVEL - 1;
 		
+		var waterAmt = Std.parseInt(fastXml.att.water);
+		player.waterLeft = waterAmt;
+		
 		
 		for (s in fastXml.node.Entities.nodes.Player) {
 			player.x = Std.parseInt(s.att.x);
@@ -89,6 +92,10 @@ class LevelChunk extends Entity {
 		for (s in fastXml.node.Entities.nodes.BigWaterfall) {
 			var waterfall = new Waterfall(Std.parseInt(s.att.x), Std.parseInt(s.att.y));
 			this.scene.add(waterfall);
+		}
+		for (s in fastXml.node.Entities.nodes.WaterSpout) {
+			var waterSpout = new WaterSpout(Std.parseInt(s.att.x), Std.parseInt(s.att.y), Std.parseInt(s.att.angle), Std.parseInt(s.att.color));
+			this.scene.add(waterSpout);
 		}
 		for (s in fastXml.node.Entities.nodes.Pool) {
 			var pool = new WaterPool(Std.parseInt(s.att.x), Std.parseInt(s.att.y), Std.parseInt(s.att.width), Std.parseInt(s.att.height));

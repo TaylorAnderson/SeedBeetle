@@ -1,0 +1,12 @@
+level
+    width:Float
+    height:Float
+    go through each layer, getting its data
+    Tiles: 
+        csv with index, newlines for separating lines
+    Grid: 
+        0 and 1 with newlines
+    Entities: 
+        list of entity
+            entity starts with width, height
+            can add optional props

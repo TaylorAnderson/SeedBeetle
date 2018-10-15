@@ -22,7 +22,7 @@ typedef WavePoint = {
 	x:Float,
 	y:Float,
 	spd:Vector2,
-	mass:Float
+	mass:Float 
 }
 class WaterPool extends Entity implements IWater {
 	public var isContinuous:Bool;
