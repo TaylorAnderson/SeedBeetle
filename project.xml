@@ -14,6 +14,7 @@
 
 	<haxelib name="HaxePunk"/>
 	<haxelib name="Actuate" />
+	<haxelib name="msignal" />
 
 	<haxedef name="hxp_debug" unless="release" />
 	<set name="hxp_extras"/>
@@ -21,7 +22,7 @@
 	<assets path="assets/graphics" rename="graphics" include="*.png|*.jpg"/>
 	<assets path="assets/audio" rename="audio" include="*.wav|*.ogg"/>
 	<assets path="assets/font" rename="font" include="*.ttf|*.png|*.fnt"/>
-	<assets path="assets/levels" rename="levels" include="*.oel"/>
+	<assets path="assets/levels" rename="levels" include="*.oel|*.json"/>
 </project>
 
 

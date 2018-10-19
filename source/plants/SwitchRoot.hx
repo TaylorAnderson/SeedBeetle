@@ -71,10 +71,8 @@ class SwitchRoot extends Entity {
 				for (i in 0...path.length - 1) {
 					currentDir = new Point(path[i + 1].x - path[i].x, path[i + 1].y - path[i].y);
 					currentDir.normalize(1);
-					for (j in 0...Std.int(MathUtil.distance(path[i].x, path[i].y, path[i + 1].x, path[i + 1].y))) {
-						delay += speed;
-						createRootTile((path[i].x + currentDir.x*j)*Global.GS, (path[i].y + currentDir.y*j)*Global.GS, path[i+1], delay);
-					}
+					delay += speed;
+					createRootTile(path[i].x*Global.GS, path[i].y*Global.GS, path[i + 1], delay);
 				}
 				createRootTile(path[path.length - 1].x * Global.GS, path[path.length - 1].y  * Global.GS, path[path.length - 1], delay+speed);
 			}

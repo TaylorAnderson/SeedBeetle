@@ -1,4 +1,4 @@
 class Global {
-    public static var GS:Int = 8;
+    public static inline var GS:Int = 8;
 	public static var PLAYER:Player;
 }

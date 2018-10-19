@@ -14,16 +14,26 @@ import haxepunk.math.Vector2;
  * ...
  * @author Taylor
  */
-class WaterSpout extends Entity {
+class WaterSpout extends Entity implements ISwitchObject {
 
 	private var spawnInterval = 1 / 60;
 	private var spawnTimer:Float = 0;
 	private var angle:Float = 0;
 	
-	private var img:Image = new Image("graphics/waterspout.png");
+	private var img:Spritemap = new Spritemap("graphics/waterspout.png", 12, 12);
 	private var bg:Image = new Image("graphics/spoutbg.png");
-	public function new(x:Float = 0, y:Float = 0, angle:Float = 90 ) {
+	public var color:Int = 0;
+	public var activated:Bool = true;
+	public function new(x:Float = 0, y:Float = 0, angle:Float = 90, color:Int ) {
 		super(x, y);
+		
+		setHitbox(14, 14, 7, 7);
+		if (color == -1) activated = true;
+		else {
+			img.frame = color;
+			activated = false;
+		}
+		this.color = color;
 		this.addGraphic(bg);
 		this.addGraphic(img);
 		
@@ -34,12 +44,17 @@ class WaterSpout extends Entity {
 		bg.x -= this.bg.width / 2;
 		bg.y -= this.bg.height / 2;
 		img.angle = angle;
-
-		
-
+	}
+	override public function added() {
+		if (this.collide("level" , x, y) != null) {
+			bg.visible = false;
+		}
+	}
+	public function activate() {
+		this.activated = !this.activated;
 	}
 	override public function update() {
-		
+		if (!activated) return;  //the lazy way to disable a behaviour
 		spawnTimer += HXP.elapsed;
 		if (spawnTimer > spawnInterval) {
 			for (i in 0...2) {
@@ -62,7 +77,7 @@ class WaterDroplet extends PhysicsObject implements IWater {
 	public var isContinuous:Bool = false;
 	public function new(x:Float = 0, y:Float = 0, v:Vector2) {
 		super(x, y, img);
-		img.add("anim", [0, 1, 2, 3, 4], 9, false)
+		img.add("anim", [0, 1, 2, 3], 9, false)
 		.onComplete.bind(function() {
 			this.scene.remove(this);
 		});
@@ -72,8 +87,8 @@ class WaterDroplet extends PhysicsObject implements IWater {
 		});
 
 		
-		this.gravity /= 6;
-		this.friction = 0.99;
+		this.gravity /= 15;
+		this.friction = 0.97;
 
 		img.play("anim");
 		this.v = v;
@@ -85,6 +100,8 @@ class WaterDroplet extends PhysicsObject implements IWater {
 	override public function update() {
 		super.update();
 		
+		this.v.x *= friction;
+		
 		switch img.frame {
 			case 0: setHitbox(8, 8);
 			case 1: setHitbox(6, 6, -1, -1);
@@ -92,13 +109,16 @@ class WaterDroplet extends PhysicsObject implements IWater {
 			case 3: setHitbox(2, 2, -3, -3);
 			case 4: setHitbox(1, 1, -3, -4);
 		}
-		//img.alpha -= 0.01 ;
+		img.alpha -= 0.03 ;
 		
 		
 		if (collide("level", x, y) != null) {
 			this.img.play("out");
 			this.v.x = 0;
 			this.v.y = 0;
+		}
+		else {
+			img.frame = Math.round(MathUtil.scale(v.x, 0, 6, 3, 0));
 		}
 	}
 	public function consume() {

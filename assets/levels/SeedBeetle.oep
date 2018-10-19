@@ -17,14 +17,16 @@
     <Height>320</Height>
   </LevelMaximumSize>
   <Filename>D:\Game Projects\HaxePunk Projects\SeedBeetle\assets\levels\SeedBeetle.oep</Filename>
-  <AngleMode>Radians</AngleMode>
+  <AngleMode>Degrees</AngleMode>
   <CameraEnabled>false</CameraEnabled>
   <CameraSize>
     <Width>640</Width>
     <Height>480</Height>
   </CameraSize>
   <ExportCameraPosition>false</ExportCameraPosition>
-  <LevelValueDefinitions />
+  <LevelValueDefinitions>
+    <ValueDefinition xsi:type="IntValueDefinition" Name="water" Default="6" Min="0" Max="6" ShowSlider="true" />
+  </LevelValueDefinitions>
   <LayerDefinitions>
     <LayerDefinition xsi:type="GridLayerDefinition">
       <Name>Grid</Name>
@@ -104,14 +106,14 @@
     </EntityDefinition>
     <EntityDefinition Name="Seed" Limit="-1" ResizableX="false" ResizableY="false" Rotatable="false" RotateIncrement="15">
       <Size>
-        <Width>19</Width>
+        <Width>18</Width>
         <Height>16</Height>
       </Size>
       <Origin>
         <X>0</X>
         <Y>0</Y>
       </Origin>
-      <ImageDefinition DrawMode="Image" ImagePath="..\graphics\seed.png" Tiled="false">
+      <ImageDefinition DrawMode="Image" ImagePath="..\graphics\seed.png" Tiled="true">
         <RectColor A="255" R="255" G="0" B="0" />
       </ImageDefinition>
       <ValueDefinitions>
@@ -260,6 +262,23 @@
       </ImageDefinition>
       <ValueDefinitions>
         <ValueDefinition xsi:type="IntValueDefinition" Name="seedColor" Default="0" Min="0" Max="2" ShowSlider="false" />
+      </ValueDefinitions>
+      <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
+    </EntityDefinition>
+    <EntityDefinition Name="WaterSpout" Limit="-1" ResizableX="false" ResizableY="false" Rotatable="true" RotateIncrement="45">
+      <Size>
+        <Width>14</Width>
+        <Height>14</Height>
+      </Size>
+      <Origin>
+        <X>7</X>
+        <Y>7</Y>
+      </Origin>
+      <ImageDefinition DrawMode="Image" ImagePath="..\graphics\waterspout.png" Tiled="false">
+        <RectColor A="255" R="0" G="0" B="255" />
+      </ImageDefinition>
+      <ValueDefinitions>
+        <ValueDefinition xsi:type="IntValueDefinition" Name="color" Default="-1" Min="0" Max="1" ShowSlider="false" />
       </ValueDefinitions>
       <NodesDefinition Enabled="false" Limit="-1" DrawMode="None" Ghost="false" />
     </EntityDefinition>
