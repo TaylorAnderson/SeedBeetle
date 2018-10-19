@@ -36,7 +36,7 @@ class GameScene extends Scene {
 	public function new(levelIndex:Int ) {
 		super();
 		this.levelIndex = levelIndex;
-		this.editor = new Editor("levels/leveleditortest.json");
+		this.editor = new Editor("levels/level-editor-init.json");
 	
 	}
 

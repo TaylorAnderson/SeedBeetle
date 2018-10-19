@@ -2,7 +2,7 @@ package level_editor.ui_elements;
 import flash.display.CapsStyle;
 import flash.display.LineScaleMode;
 import flash.display.Sprite;
-import level_editor.Rectangle;
+import level_editor.RectGraphic;
 
 /**
  * ...
@@ -10,7 +10,7 @@ import level_editor.Rectangle;
  */
 class Toggle extends Button {
 
-	private var bg:Rectangle = new Rectangle();
+	private var bg:RectGraphic = new RectGraphic();
 	private var check:Sprite = new Sprite();
 	
 	public function new() {

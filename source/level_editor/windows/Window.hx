@@ -5,8 +5,7 @@ import flash.events.MouseEvent;
 import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
-import js.html.Rect;
-import level_editor.Rectangle;
+import level_editor.RectGraphic;
 
 /**
  * ...
@@ -17,11 +16,11 @@ class Window extends Sprite {
 	public var title:String = "";
 	
 	
-	private var bg:Rectangle = new Rectangle();
-	private var topBar:Rectangle = new Rectangle();
-	private var topBarInteractive:Rectangle = new Rectangle();
-	private var shadow:Rectangle = new Rectangle();
-	private var outline:Rectangle = new Rectangle();
+	private var bg:RectGraphic = new RectGraphic();
+	private var topBar:RectGraphic = new RectGraphic();
+	private var topBarInteractive:RectGraphic = new RectGraphic();
+	private var shadow:RectGraphic = new RectGraphic();
+	private var outline:RectGraphic = new RectGraphic();
 	private var content:Sprite = new Sprite();
 	private var titleText:TextField = new TextField();
 	private var outerPadding:Float = 6;
@@ -32,6 +31,8 @@ class Window extends Sprite {
 	
 	public function new(caption:String) {
 		super();
+
+		this.scaleX = this.scaleY = 0.25;
 		
 		this.caption = caption;
 		

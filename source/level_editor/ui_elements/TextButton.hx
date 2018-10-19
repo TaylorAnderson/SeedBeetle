@@ -14,7 +14,7 @@ class TextButton extends Button {
 	private var txtColor = 0xf7deaf;
 	
 	private var txt:TextField = new TextField();
-	private var bg:Rectangle = new Rectangle();
+	private var bg:RectGraphic = new RectGraphic();
 	private var padding:Float = 5;
 	
 	public var text:String;

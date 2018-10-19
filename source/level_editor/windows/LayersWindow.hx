@@ -1,5 +1,5 @@
 package level_editor.windows;
-import level_editor.DataManager.LayerData;
+import level_editor.DataManager.LayerFileData;
 import level_editor.stacks.ButtonStack;
 import level_editor.ui_elements.Button;
 import level_editor.ui_elements.TextButton;
@@ -20,19 +20,25 @@ class Layers {
 class LayersWindow extends Window {
 
 	public var onLayerChangedSignal:Signal1<String> = new Signal1(String);
-	public function new() {
+
+	private var layerBtns:Array<TextButton> = [];
+
+	private var layerData:Array<LayerFileData>;
+	public function new(layers:Array<LayerFileData>) {
+		this.layerData = layers;
 		super("Layers");
+		
 	}
 	
 	override public function setupContent() {
-		var btnStack = (new ButtonStack([
-			new TextButton(Layers.SCENERY), 
-			new TextButton(Layers.ENTITIES),
-			new TextButton(Layers.BG),
-			new TextButton(Layers.GRID),
-		]));
 		
-		for (btn in btnStack.elements) {
+		for (layer in this.layerData) {
+			var txtBtn = new TextButton(layer.name);
+			this.layerBtns.push(txtBtn);
+		}
+		var btnStack = (new ButtonStack(this.layerBtns));
+		
+		for (btn in this.layerBtns) {
 			cast(btn, Button).onClickedSignal.add(this.onBtnClicked);
 			var toggle = new Toggle();
 			toggle.x = btn.x + btn.width + 4;

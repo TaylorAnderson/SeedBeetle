@@ -1,5 +1,6 @@
 package level_editor.layers;
 
+import level_editor.DataManager.LayerProjectData;
 import flash.display.Sprite;
 
 /**

@@ -182,10 +182,10 @@ class LevelChunk extends Entity {
 				if (left && right && top && bottom)
 				{
 					if (bottomright && bottomleft && topright && topleft)
-						index = 14;
+						index = 0;
 					if (onedeep)
 					{
-						index = HXP.choose(0, 1);
+						index = 0;
 					}
 
 					if (!bottomright)

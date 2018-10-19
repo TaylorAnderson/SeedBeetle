@@ -6,7 +6,7 @@ import flash.display.Sprite;
  * ...
  * @author Taylor
  */
-class Rectangle extends Sprite {
+class RectGraphic extends Sprite {
 
 	
 	public function new() {
