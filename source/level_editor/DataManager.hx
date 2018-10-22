@@ -86,6 +86,11 @@ typedef LevelFileData = {
 	layers:Array<LayerFileData>
 }
 
+typedef ToolConfig = {
+	name:String,
+	iconImgPath:String,
+	layerType:LayerType,
+}
 
 
 

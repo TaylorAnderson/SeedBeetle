@@ -1,4 +1,7 @@
 package level_editor.ui_elements;
+import flash.display.Bitmap;
+import flash.display.Sprite;
+import openfl.Assets;
 
 /**
  * ...
@@ -6,8 +9,19 @@ package level_editor.ui_elements;
  */
 class IconButton extends Button {
 
-	public function new(x:Float=0, y:Float=0) {
-		super(x, y);
+	private var icon:Bitmap;
+	private var bg:Sprite;
+	private var padding:Float = 5;
+	public function new(imgPath:String) {
+		super();
+		this.icon = new Bitmap(Assets.getBitmapData(imgPath));
+		
+		var g = this.bg.graphics;
+		g.beginFill(0xFFFFFF);
+		g.drawRect(0, 0, icon.width + padding * 2, icon.height + padding * 2)
+		g.endFill();
+		
+		this.icon.x = this.icon.y = padding;
 		
 	}
 	
