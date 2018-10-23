@@ -6,6 +6,7 @@ import flash.text.TextField;
 import flash.text.TextFieldAutoSize;
 import flash.text.TextFormat;
 import level_editor.RectGraphic;
+import openfl.Assets;
 
 /**
  * ...
@@ -42,6 +43,7 @@ class Window extends Sprite {
 		var format = new TextFormat();
 		format.color = 0xFFFFFF;
 		format.size = 14;
+		format.font = Assets.getFont("font/SourceSansPro-Regular.ttf").fontName;
 		
 		titleText.text = caption;
 		titleText.defaultTextFormat = format;
@@ -54,7 +56,7 @@ class Window extends Sprite {
 		
 		shadow.draw(bg.width, outlinePadding*2, 0x181e32);
 		
-		outline.draw(bg.width + outlinePadding * 2, bg.height + barHeight + shadow.height + outlinePadding * 2, 0x8bd3f1);
+		outline.draw(bg.width + outlinePadding * 2, bg.height + barHeight + shadow.height + outlinePadding * 2, 0xFFFFFF);
 		
 		//adding kids
 		this.addChild(this.outline);

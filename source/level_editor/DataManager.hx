@@ -79,17 +79,18 @@ typedef LevelProjectData = {
 	height:Int,
 	layers:Array<LayerProjectData>,
 	entities:Array<EntityProjectData>,
+	tilesetPath:String,
 }
 typedef LevelFileData = {
 	width:Int,
 	height:Int,
-	layers:Array<LayerFileData>
+	layers:Array<LayerFileData>,
+	
 }
 
 typedef ToolConfig = {
 	name:String,
 	iconImgPath:String,
-	layerType:LayerType,
 }
 
 

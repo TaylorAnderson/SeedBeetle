@@ -37,7 +37,7 @@ class TileLayer extends Layer {
 				this.tileIndices.push(this.tileset.addRect(new Rectangle(x*this.gridSize, y*this.gridSize, this.gridSize, this.gridSize)));
 			}
 		}
-		this.tilemap = new Tilemap(levelWidth, levelHeight, tileset, false);
+		
 		this.addChild(this.tilemap);
 		
 		this.loadFromString(fileLayerData.data);

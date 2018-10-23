@@ -19,8 +19,8 @@ class Toggle extends Button {
 		bg.draw(btnWidth, btnHeight, 0xFFFFFF);
 		
 		var cg = check.graphics;
-		cg.lineStyle(3, 0x255ea5, 1, null, LineScaleMode.NORMAL, CapsStyle.SQUARE);
-		cg.moveTo(0, 4);
+		cg.lineStyle(4, 0x255ea5, 1, null, LineScaleMode.NORMAL, CapsStyle.SQUARE);
+		cg.moveTo(1, 5);
 		cg.lineTo(6, 9);
 		cg.lineTo(13, 0);
 		

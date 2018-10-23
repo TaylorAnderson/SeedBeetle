@@ -1,5 +1,6 @@
 package level_editor;
 
+import level_editor.DataManager.ToolConfig;
 import openfl.display.PixelSnapping;
 import flash.display.Bitmap;
 import openfl.Assets;
@@ -40,11 +41,15 @@ class Level extends Sprite {
 	public var layers:Array<Layer> = [];
 	public var entityImages:Map<EntityProjectData, Bitmap> = new Map();
 	private var levelProjectData:LevelProjectData;
+	
+	public var currentLayer:LayerFileData;
+	public var currentTool:ToolConfig;
 
-	public function new(levelProjectData:LevelProjectData, levelFileData:LevelFileData) {
+	public function new(levelProjectData:LevelProjectData, levelFileData:LevelFileData, entityImages:Map<EntityProjectData, Bitmap>) {
 		super();
 		this.levelWidth = levelFileData.width*Global.GS;
-		this.levelHeight = levelFileData.height*Global.GS;
+		this.levelHeight = levelFileData.height * Global.GS;
+		this.entityImages = entityImages;
 		bg.draw(levelWidth, levelHeight, 0x181e32);
 		grid.draw(levelWidth, levelHeight, Global.GS, 0x1f3c61, 0.5);
 		this.addChild(bg);
@@ -54,9 +59,6 @@ class Level extends Sprite {
 
 		this.levelProjectData = levelProjectData;
 		
-		for (entity in levelProjectData.entities) {
-			registerEntity(entity);
-		}
 		
 		for (i in 0...levelProjectData.layers.length) {
 
@@ -71,7 +73,7 @@ class Level extends Sprite {
 				case LayerType.ENTITIES:
 					newLayer = new EntityLayer(fileLayerData, levelProjectData.entities, this.entityImages);
 				case LayerType.TILES:
-					newLayer = new TileLayer(levelWidth, levelHeight, projectLayerData, fileLayerData, "graphics/tiles.png");
+					newLayer = new TileLayer(levelWidth, levelHeight, projectLayerData, fileLayerData, levelProjectData.tilesetPath);
 			}
 			this.addChild(newLayer);
 			this.layers.push(newLayer);
@@ -79,23 +81,12 @@ class Level extends Sprite {
 
 		this.addChild(grid);
 	}
-
-
-	public function registerEntity(entityConfig:EntityProjectData) {
-		var bmd:BitmapData = null;
-		var bitmap:Bitmap = null;
-
-		if (entityConfig.graphicType == EntityGraphicType.IMAGE) {
-			bmd = Assets.getBitmapData(entityConfig.imgPath);
-		}
-		if (entityConfig.graphicType == EntityGraphicType.RECTANGLE) {
-			bmd = new BitmapData(Std.int(entityConfig.width), Std.int(entityConfig.height), false, entityConfig.rectColor);
-		}
-
-		bitmap = new Bitmap(bmd, PixelSnapping.ALWAYS, false);
-		if (entityConfig.tileImage) bitmap.scrollRect = new Rectangle(0,0,entityConfig.width, entityConfig.height);
-
-		this.entityImages.set(entityConfig, bitmap);
+	
+	public function setCurrentLayer(layer:LayerFileData) {
+		this.currentLayer = layer;
+	}
+	public function setCurrentTool(tool:ToolConfig) {
+		
 	}
 
 	
